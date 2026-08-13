@@ -1,0 +1,70 @@
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.manifest
+*.spec
+pip-wheel-metadata/
+.Python
+
+# Pytest
+.pytest_cache/
+.cache/
+pytestdebug.log
+
+# All generated reports/results (traces, Allure, pytest-html)
+reports-results/
+
+# Playwright / test artifacts (legacy locations)
+test-results/
+playwright-report/
+blob-report/
+**/trace.zip
+
+# Allure (legacy locations)
+allure-results/
+allure-report/
+
+# HTML reports (pytest-html, legacy locations)
+report.html
+assets/
+
+# Secrets and local env
+.env
+.env.*
+*.pem
+data/input_data/credentials.json
+
+# IDE / editors
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Backup folders
+bck*/
+
+# Logs and temp
+*.log
+*.tmp
+*.temp
+tmp/
+temp/

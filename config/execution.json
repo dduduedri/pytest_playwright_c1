@@ -1,0 +1,8 @@
+{
+  "application_url": "http://rahulshettyacademy.com/client",
+  "api_url": "https://rahulshettyacademy.com",
+  "browser": "chromium",
+  "browser_channel": "chrome",
+  "headless": false,
+  "default_timeout_ms": 30000
+}
