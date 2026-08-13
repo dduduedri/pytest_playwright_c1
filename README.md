@@ -2,7 +2,20 @@
 
 ## Based on Udemy course
 https://amdocsglobal.udemy.com/course/playwright-python-automation-testing-pytest/
+
+## Basic commands
+# Playwright locator identifier -
 playwright codegen http://rahulshettyacademy.com/client
+
+# Run the full suite (Chrome, parallel, tracing + video, clean old Allure results)
+pytest --browser_name chrome -m full -n auto --headless --tracing on --video on --clean-alluredir
+
+# Open the Allure report
+allure serve reports-results/allure-results
+
+# Open a saved Playwright trace
+playwright show-trace "reports-results/test-results/test_create_order_and_verify_ui[user_a]/trace.zip"
+
 ## Project structure
 
 ```
