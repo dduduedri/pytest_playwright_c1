@@ -22,41 +22,67 @@ def _read_json(path: Path) -> Any:
 # folder holding test-input datasets (credentials, ...)
 INPUT_DATA_DIR = DATA_DIR / "input_data"
 
-# path to the credentials file (single source of truth for the two helpers below)
+# users live in credentials.json, which is git-ignored: it holds real accounts, so it
+# is created per machine (see README) and never committed
 CREDENTIALS_FILE = INPUT_DATA_DIR / "credentials.json"
 
 
-# return the user credential records from data/input_data/credentials.json.
-# the file maps a user key (user_a, user_b, ...) to a {userEmail, UserPassword}
-# record; we return just the records as a flat list so tests can @parametrize over them
+# private helper: read the credentials file, explaining how to create it if it is absent
+def _read_credentials() -> dict:
+    if not CREDENTIALS_FILE.exists():
+        raise FileNotFoundError(
+            f"No credentials file was found at {CREDENTIALS_FILE}. Create it with at "
+            f'least a "default" user: {{"default": {{"user": "...", "password": "..."}}}}.'
+        )
+    return _read_json(CREDENTIALS_FILE)
+
+
+# return the user credential records from the credentials file.
+# the file maps a user key (default, editor, ...) to a {user, password} record;
+# we return just the records as a flat list so tests can @parametrize over them
 def load_credentials() -> list[dict]:
     """Return the list of user credential records from data/input_data/credentials.json."""
-    return list(_read_json(CREDENTIALS_FILE).values())
+    return list(_read_credentials().values())
 
 
-# return the user keys (user_a, user_b, ...) in the same order as load_credentials().
-# use these as pytest `ids=` so each case is labelled by its key instead of an index
+# return one credential record by its key, so a fixture can ask for a specific user
+# (the login user, an editor, a reader, ...) instead of relying on the file's order
+def load_credential(key: str) -> dict:
+    """Return the {user, password} record stored under `key` in the credentials file."""
+    users = _read_credentials()
+    if key not in users:
+        available = ", ".join(sorted(users)) or "(none)"
+        raise KeyError(
+            f"User '{key}' was not found in {CREDENTIALS_FILE}. Available: {available}."
+        )
+    return users[key]
+
+
+# return the user keys (default, editor, ...) in the same order as load_credentials().
+# use these as pytest `ids=` so each case is labelled by its key instead of an index.
+# @parametrize runs at import time, so a missing credentials file yields no cases
+# instead of breaking collection for the whole suite
 def load_credential_ids() -> list[str]:
-    """Return the credential keys (user_a, user_b, ...) for use as pytest ids."""
-    return list(_read_json(CREDENTIALS_FILE).keys())
+    """Return the credential keys (default, editor, ...) for use as pytest ids."""
+    return list(_read_credentials().keys()) if CREDENTIALS_FILE.exists() else []
 
 
-# return just the emails, in the same order as load_credentials()/load_credential_ids().
+# return just the login names, in the same order as load_credential_ids().
 # tests parametrize over these: Allure records every test parameter, so the password
-# must never be one (see load_passwords_by_email below)
-def load_credential_emails() -> list[str]:
-    """Return the user emails in the same order as load_credential_ids()."""
-    return [record["userEmail"] for record in load_credentials()]
+# must never be one (see load_passwords_by_user below)
+def load_credential_users() -> list[str]:
+    """Return the user login names in the same order as load_credential_ids()."""
+    return [record["user"] for record in load_credentials()] if CREDENTIALS_FILE.exists() else []
 
 
-# return an email -> password map. the password is looked up inside the test from a
+# return a user -> password map. the password is looked up inside the test from a
 # fixture instead of being passed as a parameter, which keeps it out of the report
-def load_passwords_by_email() -> dict[str, str]:
-    """Return a {userEmail: UserPassword} map for looking up a password at run time."""
-    return {record["userEmail"]: record["UserPassword"] for record in load_credentials()}
+def load_passwords_by_user() -> dict[str, str]:
+    """Return a {user: password} map for looking up a password at run time."""
+    return {record["user"]: record["password"] for record in load_credentials()}
 
 
-# placeholder token in payload templates, e.g. "<order_id>" or "<userEmail>".
+# placeholder token in payload templates, e.g. "<email>" or "<user_id>".
 # any run-time value can be injected by passing it as a keyword to load_api_payload().
 _PLACEHOLDER = re.compile(r"<([^<>]+)>")
 
@@ -93,12 +119,12 @@ def _lookup(token: str, params: dict, source: str) -> Any:
 
 # return an API request payload from data/api_payloads/<name>.json.
 # any <placeholder> tokens in the file are replaced with the matching keyword
-# arguments, e.g. load_api_payload("login", userEmail=email, userPassword=pwd).
+# arguments, e.g. load_api_payload("login", email=email, password=password).
 def load_api_payload(name: str, **params: Any) -> dict:
     """Return an API request payload from data/api_payloads/<name>.json.
 
     Pass keyword arguments to substitute <placeholder> tokens in the file, e.g.
-    load_api_payload("create_order", order_id="123") replaces "<order_id>".
+    load_api_payload("create_user", user_id="123") replaces "<user_id>".
     """
     payload = _read_json(DATA_DIR / "api_payloads" / f"{name}.json")
     return _render_placeholders(payload, params, name)

@@ -1,0 +1,1137 @@
+{
+  "schema": 1,
+  "updated": "2026-08-13T14:12:16",
+  "tests": [
+    {
+      "old": "com.testFlows.AuditTests#spoAuditChangesBetweenLocalAndPublished",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.BillDiscountApiTests#assertImpactedBillDiscountInSPOBillDiscountConditionByAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.BundleProductOfferApiTests#createPricesInBPO",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.BusinessRelationsValidationApiTests#replaceRelationValidationPositiveCaseAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.BusinessRelationsValidationApiTests#commercialRelationValidationPositiveCaseAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.BusinessRequestTests#validateBRDetailsOnGridViewForNonApprovalBRFlow",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.BusinessRequestTests#businessRequestCharacteristics",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.BusinessRequestTests#mergeBRTests",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.BusinessValidationsApiTests#autoFixBusinessValidationIssue",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.BusinessValidationsTests#publishBRFromUI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.C1D1Tests#externalIDForPOAndPOPAndPrice",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.C1DashBoardLogin#loginIntoDashBoard",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.CategoryTests#createNewCategory",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.CommercialRelationApiTests#createCommercialRelationAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.CommercialRelationTests#duplicateCommercialRelationAndReplaceRelation",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.CommercialRelationTests#createCommercialRelationWithOfferGroupCriteria",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ConflictResolutionTests#conflictResolutionFromSharedUpdatesForSPOPSBPOPromo",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ConflictResolutionTests#conflictResolutionForPriceExternalID",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ConflictResolutionTests#conflictResolutionForProductSpecAndCategory",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#uiControlMenuTestAndValidateTitle",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#openTroubleShootPageAndValidateTitle",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#openPageAndValidateTitle",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#setExpirationDateTool",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#createVariantGroup",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#createBulkDataByDataInflation",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#searchExportAndValidatePOD",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#validateBRWithErrorAndWarningMessages",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#searchPITViewer",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#generalTroubleShootingQueries",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#kafkaTroubleShooting",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#generateAndVerifyReconciliationAndDifferenceReport",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#uploadWorkFlowTemplates",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#validateEntityPopulation",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#completeAutoFixAndReValidateBRFromDashboard",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#exportBusinessParameterAndValidate",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#exportSimpleAndComplexGE",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DashboardUITest#verifyReferenceDataExport",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DataStreamsTests#streamlineBusinessRequestMergeWithBaseLine",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DataStreamsTests#validateMergeConflictInPriceGroupPanelThroughGetStreamChanges",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.DeleteCatalogItemUseCases#deleteAndRestoreEntitiesFromWorkspace",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ExportImportTests#userExportZip",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ExportImportTests#userExportImportExcel",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.GenericEntityTableTests#validValuesInLightBoxTests",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.GenericEntityTableTests#filterInnerTableWithMultipleColumns",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.GenericEntityTableTests#tableRegistrationViaUI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.GenericEntityTableTests#validateDeletionOfGEEReferredIn500Entities",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.GenericEntityTableTests#complexTablesFlowForReferenceTable",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.GenericEntityTableTests#searchInFilterList",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.GeoGraphicAddressTests#updateModifyGeoGraphicAddress",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.MultiPlayEquipmentRulesTestsUI#multiPlayEquipmentRulesTableAddData",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.MultiPlayEquipmentRulesTestsUI#multiPlayEquipmentRulesTableValidations",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.OfferGroupTests#offerGroupPolicyCharacteristicsFlow",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_1#createBR",
+      "status": "verified",
+      "new": "tests/ui/test_create_business_request.py::test_create_business_request",
+      "markers": [
+        "ui"
+      ],
+      "symbols": [
+        {
+          "old": "com.testFlows.BaseTest#performLogin",
+          "new": "ui/pages/keycloak_login_page.py::KeycloakLoginPage.sign_in"
+        },
+        {
+          "old": "com.ui.steps.createBR.CreateBRSteps#openBusinessRequestsMenu",
+          "new": "ui/components/hamburger_menu.py::HamburgerMenu.open_business_requests"
+        },
+        {
+          "old": "com.ui.steps.createBR.CreateBRSteps#clickCreateNew",
+          "new": "ui/pages/business_requests_page.py::BusinessRequestsPage.click_create_new"
+        },
+        {
+          "old": "com.ui.steps.createBR.CreateBRSteps#fillBusinessRequestName",
+          "new": "ui/components/create_br_dialog.py::CreateBrDialog.fill_name"
+        },
+        {
+          "old": "com.ui.steps.createBR.CreateBRSteps#setDueDate",
+          "new": "ui/components/create_br_dialog.py::CreateBrDialog.set_due_date"
+        },
+        {
+          "old": "com.ui.steps.createBR.CreateBRSteps#getCurrentDateOption",
+          "new": "ui/elements/date_picker.py::choose_day_label"
+        },
+        {
+          "old": "com.ui.steps.createBR.CreateBRSteps#selectApprovalFlow",
+          "new": "ui/components/create_br_dialog.py::CreateBrDialog.select_approval_flow"
+        },
+        {
+          "old": "com.ui.steps.createBR.CreateBRSteps#clickCreateAndOpen",
+          "new": "ui/components/create_br_dialog.py::CreateBrDialog.create_and_open"
+        },
+        {
+          "old": "com.ui.base.baseElements.DatePicker#selectCurrentDate",
+          "new": "ui/elements/date_picker.py::DatePicker.select_date"
+        },
+        {
+          "old": "com.ui.base.baseElements.Dropdown#selectOption",
+          "new": "ui/elements/listbox_dropdown.py::ListboxDropdown.select"
+        },
+        {
+          "old": "com.ui.base.baseElements.Link#click",
+          "new": "ui/elements/link.py::Link.click"
+        },
+        {
+          "old": "com.ui.base.baseElements.TextBox#setText",
+          "new": "ui/elements/text_box.py::TextBox.fill"
+        },
+        {
+          "old": "com.ui.base.baseElements.Button#click",
+          "new": "ui/elements/button.py::Button.click"
+        },
+        {
+          "old": "com.infrastructure.configuration.ConfigManager#getTestUsername",
+          "new": "utils/data_reader.py::load_credential"
+        }
+      ],
+      "notes": "Verified against c1-env-auto-testing-auth-1445. Deviations: (1) the Java literal BR name 'br0' became utils/test_data.py::unique_name('br') so the test is repeatable and parallel-safe; (2) the details page is asserted on the real URL (designerLayout?businessRequestId=<id>) plus the Details menu - Java's /businessRequests/<id> check never matched this app version and always fell through to its element fallback; (3) clickCreateAndOpen's 550-line click/retry machinery is replaced by one click plus a wait for the dialog to close; (4) the calendar's Apply is page-global as in Java (not scoped to the picker), because the popup renders outside the field.",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_1#createBR1",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_1#createBR2",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_1#createBR3",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_1#createBR4",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_1#createBR5",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_1#createBR6",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_1#createBR7",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_1#createBR8",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_1#createBR9",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_2#searchCatalogTV",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_2#searchCatalogMobile",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_3#createBRViaApi",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PlaywrightTest_3#createBRWithBaselineViaApi",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceAlterationOnPOTAndPGTests#verifyPriceGroupPricePanelDisplaysPriceAlterations",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceAlterationOnPOTAndPGTests#verifyBasePriceRemovalRemovesPriceAlteration",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceCapabilities#priceRateChangeInSPOEffectBPO",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceCapabilities#rateChangeWithCreateNewVersion",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceCapabilities#reducedPriceOnOCWithTableAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceEventQualificationRulesApiTests#createPriceEventWithQualificationRuleBaseOnPOIsAnyConditionAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceEventQualificationRulesApiTests#createAssociateAndDeleteQualificationRuleToProductOfferThatHasQualifiedProductOfferingOptionAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceEventQualificationRulesApiTests#createAndAssociateQualificationRuleToProductOfferThatHasQualifiedProductOfferingOptionWithGroupByAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceEventQualificationRulesApiTests#deletePriceEventWithQualificationRuleAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceEventQualificationRulesApiTests#duplicateExistingPriceEventAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceEventRuleTests#createPriceEventRule",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceGroupApiTests#priceGroupSupportVersioningCreateUpdateAndRemoveAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PriceGroupTests#createPriceGroupVersionDuplicateAndDelete",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PricesUITests#createMarketCompositePrice",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PricesUITests#priceCharacteristicsRelationToGeTable",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ProductOfferingUITests#productSpecCharacteristicTest",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ProductOfferingUITests#createBundleWithBundleChild",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ProductOfferingUITests#updateProductOffer",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ProductOfferingUITests#newCharacteristicsFlowForSPO",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ProductOfferingUITests#createProductOfferTypeAndAddMetaDataWithPropertySet",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ProductSpecApiTests#disassociateCharacteristicsFromProductSpecAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ProductSpecTypeTest#createAndPublishPST",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.ProductSpecUITests#createProductSpecTypeFromSimpleFlowBR",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.Promotions#createQuantifiedPromotionWithLargePopulationWithFewDiscounts",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.Promotions#createQuantifiedPromotionWithLargePopulationWithFreeOffer",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.Promotions#createSMBPromotionWithLargePopulation",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PromotionsApiTests#validateEnabledPromotionInPsPoPST",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.PublishToTestEnvTests#publishBRToTestWhenEnvOlderThanBR",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.RoleBasedAuthorizationTests#businessRequestFilters",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.RoleBasedAuthorizationTests#validateReaderUserAccess",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.RoleBasedAuthorizationTests#validateAuthorUserAccess",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.RoleBasedAuthorizationTests#readOnlyUserAccessVerification",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.RoleBasedAuthorizationTests#approvalFlowsAndBRCharacteristicsBetweenUsers",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.RulesApiTests#qualificationFilterApply",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.RulesApiTests#validateExistingSARuleMandatoryBoosterForInternetBerta",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.RulesTests#createQualificationRuleWithInExpressionUsingDifferentSearchOptions",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SearchTests#searchAllItemTypesImplementedInUI2",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SearchTests#searchByWildcardCharacterInsideBR",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SecurityRuleUITests#securityRulesWithBV",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SharedAccessRulesApiTests#sharedAccessExistingRuleWithPSTNVoiceAndFiberAccess",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SimpleProductOfferApiTests#updateOfferClassificationOnPOTypeAndVerifyCopiedToRelatedOfferAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SimpleProductOfferApiTests#externalIDForPOAndRelatedPriceAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SimpleProductOfferTypeApiTests#updateCharacteristicValueOnPOTypeAPI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SimpleProductOfferTypeApiTests#restoreToProductionCopyProductOfferType",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SmokeTests#openAllOfBusinessRequestFolders",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SmokeTests#navigateThroughTheMenuOptions",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SmokeTests#checkMyPreferences",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SmokeTests#searchEntityTileFlowOnWorkspaceWhatWouldYouLikeToDo",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SmokeTests#createBrCancelBrRevertCancelBrAndDeleteBrInUI",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SmokeTests#testBusinessRequestPageNotCrushWhileHovering",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SmokeTests#validateBusinessRequestUniqueCodeFromAllUIPages",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SmokeTests#assertValidationCount",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    },
+    {
+      "old": "com.testFlows.SPOPriceInstallmentSanityTests#createPromotionCheckForPromotionPolicyChange",
+      "status": "not_started",
+      "new": "",
+      "markers": [],
+      "symbols": [],
+      "notes": "",
+      "blocked_reason": null
+    }
+  ],
+  "out_of_scope": []
+}

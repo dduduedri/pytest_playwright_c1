@@ -53,7 +53,7 @@ def attach_text(name, text):
 
 
 # parent class for API clients: wraps Playwright's APIRequestContext and adds
-# common headers + Allure steps. Domain clients (AuthApi, OrdersApi) inherit it.
+# common headers + Allure steps. Domain clients (AuthApi, ...) inherit it.
 class BaseApi:
     """Thin wrapper over Playwright's APIRequestContext with Allure attachments."""
 

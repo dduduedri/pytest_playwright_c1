@@ -110,9 +110,9 @@ See the exact version for your install in either of these ways:
   <https://github.com/microsoft/playwright/blob/main/packages/playwright-core/browsers.json>).
 
 **b) Branded channel — version follows the browser installed on the machine.**
-This project uses `"browser_channel": "chrome"` in `config/execution.json`, so tests
-launch the **system-installed Google Chrome** (auto-updated by Google), not the bundled
-Chromium. Install/select a channel with:
+Set `"browser_channel"` in `config/execution.json` to launch a **system-installed**
+browser (auto-updated by its vendor) instead of the bundled Chromium. Install/select a
+channel with:
 
 ```bash
 playwright install chrome          # Google Chrome (stable), system-wide
@@ -124,10 +124,9 @@ Valid channels: `chrome`, `chrome-beta`, `chrome-dev`, `chrome-canary`, `msedge`
 `msedge-beta`, `msedge-dev`. To pin a specific Chrome version, install that channel's
 browser and set the matching value in `config/execution.json` (e.g. `chrome-beta`).
 
-> Because the default config uses `browser_channel: chrome`, make sure Google Chrome is
-> available — either already installed, or via `playwright install chrome`. Leave
-> `browser_channel` empty/null to use the bundled Chromium (version `149.0.7827.55` with
-> the currently pinned Playwright) instead.
+> The default config ships `"browser_channel": null`, so `playwright install` is all you
+> need. If you set it to `chrome`, make sure Google Chrome is available on the machine —
+> either already installed, or via `playwright install chrome`.
 
 ## 6. Install the Allure CLI (optional, for viewing reports)
 
@@ -176,7 +175,23 @@ playwright --version
 allure --version      # only if you installed the Allure CLI in step 6
 ```
 
-## 8. Run the tests
+## 8. Point the framework at your application
+
+Two files decide what gets tested:
+
+- `config/environment.json` — one entry per environment, keyed by environment name, each
+  with the required `ui` and `apiHost` URLs plus the optional `keycloakUrl`, `a3sUrl` and
+  `posUrl` services. `config/execution.json` holds the run behaviour instead: which
+  `environment` to use (only needed when the file defines more than one), browser,
+  channel, headless, default timeout, `test_id_attribute` and `ignore_https_errors`.
+- `data/input_data/credentials.json` — create it with your real accounts, as
+  `{"default": {"user": "...", "password": "..."}}`. It is git-ignored and never
+  committed, so every machine and CI runner provides its own.
+
+The three example tests are skipped until their page object / API client points at your
+app — see [Point the template at your application](../README.md#point-the-template-at-your-application).
+
+## 9. Run the tests
 
 ```bash
 pytest -s
@@ -216,7 +231,7 @@ pytest --tracing on
 Combined example (browser, marker, parallel, tracing, HTML report):
 
 ```bash
-pytest --browser_name chrome -m full -n auto --tracing on --html=report.html
+pytest --browser_name chromium -m e2e -n auto --tracing on --html=report.html
 ```
 
 View a trace locally, or open [trace.playwright.dev](https://trace.playwright.dev/) and
@@ -226,7 +241,7 @@ drag-and-drop the `trace.zip` onto the page:
 playwright show-trace "reports-results/test-results/<test-name>/trace.zip"
 ```
 
-## Deactivate the virtual environment
+## 10. Deactivate the virtual environment
 
 When you are finished working:
 

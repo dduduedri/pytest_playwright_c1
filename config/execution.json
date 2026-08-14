@@ -1,8 +1,9 @@
 {
-  "application_url": "http://rahulshettyacademy.com/client",
-  "api_url": "https://rahulshettyacademy.com",
+  "environment": "c1-env-auto-testing-auth-1445",
   "browser": "chromium",
-  "browser_channel": "chrome",
+  "browser_channel": null,
   "headless": false,
-  "default_timeout_ms": 30000
+  "default_timeout_ms": 180000,
+  "test_id_attribute": "data-test-id",
+  "ignore_https_errors": true
 }

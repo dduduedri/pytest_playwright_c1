@@ -37,30 +37,45 @@ python -m pytest --version
 
 ## 2) Run and view
 
-> **Execution defaults live in** `config/execution.json`**.** It sets `application_url`,
-> `api_url`, `browser`, `browser_channel`, `default_timeout_ms`, and the default
-> `"headless"` value (`true` = headless, `false` = headed).
+> **Defaults live in two files under** `config/`**.** `environment.json` names the
+> application under test (one entry per environment, each with `ui` and `apiHost`);
+> `execution.json` sets `browser`, `browser_channel`, `default_timeout_ms`, the default
+> `"headless"` value (`true` = headless, `false` = headed; it ships as `false`, so runs are
+> headed unless you pass `--headless`) and the default `environment`.
+>
+> **The environment is chosen per run with** `--env` (a key of `environment.json`);
+> without it the `environment` value in `execution.json` is used:
+>
+> ```powershell
+> pytest -m ui --env c1-env-auto-testing-auth-1445
+> pytest -m ui --env c1-env-automation-testing-1444
+> ```
 >
 > **Headed/headless can also be overridden per run from the command line** (the flag wins
 > over the config default):
 >
 > ```powershell
-> pytest --browser_name chrome -m full --headed     # force headed this run
-> pytest --browser_name chrome -m full --headless   # force headless this run
-> pytest --browser_name chrome -m full              # use config/execution.json default
+> pytest --browser_name chromium -m e2e --headed     # force headed this run
+> pytest --browser_name chromium -m e2e --headless   # force headless this run
+> pytest --browser_name chromium -m e2e              # use config/execution.json default (headed)
 > ```
 
 ```powershell
-# 6) Run the full suite (Chrome, parallel, tracing + video, clean old Allure results)
+# 6) Run the example e2e tests (Chromium, parallel, tracing + video, clean old Allure results)
 #    Add --headed to watch the browser, or --headless to force headless.
-pytest --browser_name chrome -m full -n auto --headless --tracing on --video on --clean-alluredir
+pytest --browser_name chromium -m e2e -n auto --headed --tracing on --video on --clean-alluredir
 
 # 7) Open the Allure report
 allure serve reports-results/allure-results
 
 # 8) Open a saved Playwright trace
-playwright show-trace "reports-results/test-results/test_create_order_and_verify_ui[user_a]/trace.zip"
+playwright show-trace "reports-results/test-results/test_api_login_then_ui_login[user_a]/trace.zip"
 ```
 
 > Already set up? Just activate the venv (`.\.venv\Scripts\Activate.ps1`) and jump to step 6.
+
+> **On a fresh clone steps 6-8 report only skipped tests and produce no trace.** The three
+> example tests carry `@pytest.mark.skip` until they point at a real application — see
+> [README.md](README.md#point-the-template-at-your-application). Remove the marker from a
+> test once its page object / API client is yours, and the artifacts above appear.
 

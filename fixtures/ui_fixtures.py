@@ -4,6 +4,8 @@ import allure
 import pytest
 from playwright.sync_api import Browser, Playwright
 
+from ui.components.hamburger_menu import HamburgerMenu
+from ui.pages.keycloak_login_page import KeycloakLoginPage
 from utils.config_reader import ExecutionConfig
 from utils.logger import get_logger
 from utils.report import attach_failure_traceback, attach_trace_pointer, is_test_failed
@@ -17,7 +19,12 @@ log = get_logger(__name__)
 @pytest.fixture(scope="session")
 def browser_setup(playwright: Playwright, request, execution_config: ExecutionConfig):
     #get the arg from the command line : pytest -s --browser_name firefox
-    browser_name = request.config.getoption("--browser_name")
+    # without the flag, config/execution.json decides
+    browser_name = request.config.getoption("--browser_name") or execution_config.browser
+
+    # teach page.get_by_test_id() which attribute the application under test uses
+    # (config/execution.json: test_id_attribute)
+    playwright.selectors.set_test_id_attribute(execution_config.test_id_attribute)
 
     # headless comes from config/execution.json by default, but a CLI flag wins:
     #   --headed   -> force headed (headless=False)   [provided by pytest-playwright]
@@ -36,6 +43,11 @@ def browser_setup(playwright: Playwright, request, execution_config: ExecutionCo
     if browser_name in ("chromium", "chrome"):
         if execution_config.browser_channel:
             launch_kwargs["channel"] = execution_config.browser_channel
+        # the context's ignore_https_errors covers what Playwright itself requests; an
+        # environment whose certificate the machine does not trust needs the flag at
+        # process level too, or Chromium refuses the page before it loads
+        if execution_config.ignore_https_errors:
+            launch_kwargs["args"] = ["--ignore-certificate-errors"]
         browser = playwright.chromium.launch(**launch_kwargs)
     elif browser_name == "firefox":
         browser = playwright.firefox.launch(**launch_kwargs)
@@ -65,7 +77,7 @@ def context_setup(browser_setup: Browser, request, execution_config: ExecutionCo
     video_mode = request.config.getoption("--video")
     record_video = video_mode in ("on", "retain-on-failure")
 
-    context_kwargs = {}
+    context_kwargs = {"ignore_https_errors": execution_config.ignore_https_errors}
     if record_video:
         video_dir = os.path.join("reports-results", "videos", request.node.name)
         context_kwargs["record_video_dir"] = video_dir
@@ -110,9 +122,10 @@ def context_setup(browser_setup: Browser, request, execution_config: ExecutionCo
     page.on("requestfailed", _on_request_failed)
     page.on("response", _on_response)
 
-    # apply the default timeout, land on the app URL, then hand the page to the test
+    # apply the default timeout, land on the app URL, then hand the page to the test.
+    # --url overrides for this run; otherwise it is the chosen environment's ui
     page.set_default_timeout(execution_config.default_timeout_ms)
-    target_url = request.config.getoption("--url")
+    target_url = request.config.getoption("--url") or execution_config.application_url
     log.info("[%s] navigating to %s", request.node.name, target_url)
     page.goto(url=target_url)
     yield page  # <-- the test runs here; everything below is teardown
@@ -202,3 +215,16 @@ def context_setup(browser_setup: Browser, request, execution_config: ExecutionCo
                 name="browser network errors",
                 attachment_type=allure.attachment_type.TEXT,
             )
+
+
+# function fixture: a page with an authenticated session. the application redirects an
+# anonymous visitor to the identity provider, so every UI test starts here instead of
+# repeating the login itself
+@pytest.fixture(scope="function")
+def logged_in_page(context_setup, login_user: dict, execution_config: ExecutionConfig):
+    page = context_setup
+    KeycloakLoginPage(page).sign_in(login_user["user"], login_user["password"])
+    # the navigation menu renders only for an authenticated user
+    HamburgerMenu(page).verify_available(timeout=execution_config.default_timeout_ms)
+    log.info("logged in as %s", login_user["user"])
+    return page

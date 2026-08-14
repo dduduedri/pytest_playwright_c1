@@ -1,0 +1,620 @@
+{
+  "generated": "2026-08-13T17:17:51",
+  "stats": {
+    "total_java_tests": 119,
+    "out_of_scope": 0,
+    "in_scope": 119,
+    "counts": {
+      "not_started": 118,
+      "in_progress": 0,
+      "code_complete": 0,
+      "verified": 1,
+      "failing": 0,
+      "blocked": 0
+    },
+    "migration_score": 0.8,
+    "code_coverage": 0.8,
+    "symbols": {
+      "declared": 14,
+      "resolved": 14,
+      "resolution": 100.0,
+      "unresolved": []
+    },
+    "per_group": {
+      "c1_dashboardtool": {
+        "total": 18,
+        "verified": 0
+      },
+      "regression_5_api": {
+        "total": 16,
+        "verified": 0
+      },
+      "group99": {
+        "total": 10,
+        "verified": 1
+      },
+      "SmokeTest": {
+        "total": 8,
+        "verified": 0
+      },
+      "RulesQualificationAndCommercialRelationAPI": {
+        "total": 7,
+        "verified": 0
+      },
+      "ui_SmokeTest": {
+        "total": 7,
+        "verified": 0
+      },
+      "regression_2": {
+        "total": 6,
+        "verified": 0
+      },
+      "ReplaceRelationPriceEventSanityAPI": {
+        "total": 5,
+        "verified": 0
+      },
+      "regression_1": {
+        "total": 5,
+        "verified": 0
+      },
+      "regression_3": {
+        "total": 5,
+        "verified": 0
+      },
+      "regression_7": {
+        "total": 5,
+        "verified": 0
+      },
+      "DashboardNFT": {
+        "total": 4,
+        "verified": 0
+      },
+      "group98": {
+        "total": 4,
+        "verified": 1
+      },
+      "pricesAndPromotionAndPOGReplaceOfferMUPublishAPI": {
+        "total": 4,
+        "verified": 0
+      },
+      "productOfferingType": {
+        "total": 4,
+        "verified": 0
+      },
+      "regression_4": {
+        "total": 4,
+        "verified": 0
+      },
+      "BrFlowApproveSanity": {
+        "total": 3,
+        "verified": 0
+      },
+      "CategoryOfferGroupCharacteristicsSanity": {
+        "total": 3,
+        "verified": 0
+      },
+      "EntityLifeCycle2": {
+        "total": 3,
+        "verified": 0
+      },
+      "GESanity": {
+        "total": 3,
+        "verified": 0
+      },
+      "PriceGroupVersionPOSanity": {
+        "total": 3,
+        "verified": 0
+      },
+      "PriceRateBRCancelSanity": {
+        "total": 3,
+        "verified": 0
+      },
+      "RBASanity": {
+        "total": 3,
+        "verified": 0
+      },
+      "RuleSanityAPI": {
+        "total": 3,
+        "verified": 0
+      },
+      "approvalFlow": {
+        "total": 3,
+        "verified": 0
+      },
+      "group1": {
+        "total": 3,
+        "verified": 0
+      },
+      "productOfferingAndMultiUsersAPI": {
+        "total": 3,
+        "verified": 0
+      },
+      "publishBR-API-tests": {
+        "total": 3,
+        "verified": 0
+      },
+      "publishBR-UI-tests2": {
+        "total": 3,
+        "verified": 0
+      },
+      "purchaseLimitAndRBA": {
+        "total": 3,
+        "verified": 0
+      },
+      "regression_14": {
+        "total": 3,
+        "verified": 0
+      },
+      "regression_35_api": {
+        "total": 3,
+        "verified": 0
+      },
+      "regression_36": {
+        "total": 3,
+        "verified": 0
+      },
+      "regression_8": {
+        "total": 3,
+        "verified": 0
+      },
+      "CommercialRelation": {
+        "total": 2,
+        "verified": 0
+      },
+      "CompositePriceBRRevertMUSanity": {
+        "total": 2,
+        "verified": 0
+      },
+      "GenericEntityTable": {
+        "total": 2,
+        "verified": 0
+      },
+      "GenericEntityTable2": {
+        "total": 2,
+        "verified": 0
+      },
+      "GenericEntityTable7": {
+        "total": 2,
+        "verified": 0
+      },
+      "ProductOfferingAPI": {
+        "total": 2,
+        "verified": 0
+      },
+      "ProductSpecPricesAndPromotionTypeAPI": {
+        "total": 2,
+        "verified": 0
+      },
+      "Promotions3": {
+        "total": 2,
+        "verified": 0
+      },
+      "QualificationRuleAndCommercialRelation": {
+        "total": 2,
+        "verified": 0
+      },
+      "SPOPolicyPriceDuplicateBPOSanityAPI": {
+        "total": 2,
+        "verified": 0
+      },
+      "conflictResolution": {
+        "total": 2,
+        "verified": 0
+      },
+      "dashExportTests3": {
+        "total": 2,
+        "verified": 0
+      },
+      "dataStreams": {
+        "total": 2,
+        "verified": 0
+      },
+      "exportFoundation2Sanity": {
+        "total": 2,
+        "verified": 0
+      },
+      "extIdProdSpecSanity": {
+        "total": 2,
+        "verified": 0
+      },
+      "group22": {
+        "total": 2,
+        "verified": 0
+      },
+      "group80": {
+        "total": 2,
+        "verified": 1
+      },
+      "priceAlteration": {
+        "total": 2,
+        "verified": 0
+      },
+      "publishBR-DecisionTableRule-API-tests": {
+        "total": 2,
+        "verified": 0
+      },
+      "publishBR-Rule-API-tests": {
+        "total": 2,
+        "verified": 0
+      },
+      "regression_12": {
+        "total": 2,
+        "verified": 0
+      },
+      "regression_15": {
+        "total": 2,
+        "verified": 0
+      },
+      "regression_17": {
+        "total": 2,
+        "verified": 0
+      },
+      "regression_19_api": {
+        "total": 2,
+        "verified": 0
+      },
+      "regression_30": {
+        "total": 2,
+        "verified": 0
+      },
+      "regression_33_api": {
+        "total": 2,
+        "verified": 0
+      },
+      "runTimeTest5": {
+        "total": 2,
+        "verified": 0
+      },
+      "ui_productOfferingType": {
+        "total": 2,
+        "verified": 0
+      },
+      "(no group)": {
+        "total": 1,
+        "verified": 0
+      },
+      "BrFLowApproveSanity": {
+        "total": 1,
+        "verified": 0
+      },
+      "CommRelationCharDuplicateProdRuleSanityAPI": {
+        "total": 1,
+        "verified": 0
+      },
+      "ConflictResolutionSanity": {
+        "total": 1,
+        "verified": 0
+      },
+      "CustomerAccessorTests": {
+        "total": 1,
+        "verified": 0
+      },
+      "EntityLifeCycle": {
+        "total": 1,
+        "verified": 0
+      },
+      "GenericEntityTable4": {
+        "total": 1,
+        "verified": 0
+      },
+      "GenericEntityTable5": {
+        "total": 1,
+        "verified": 0
+      },
+      "GenericEntityTable8": {
+        "total": 1,
+        "verified": 0
+      },
+      "PriceAndPromotion": {
+        "total": 1,
+        "verified": 0
+      },
+      "ProductOfferGroup": {
+        "total": 1,
+        "verified": 0
+      },
+      "ProductOfferGroup2": {
+        "total": 1,
+        "verified": 0
+      },
+      "ProductSpecAndProductSpecTypeAndPromotionAPI": {
+        "total": 1,
+        "verified": 0
+      },
+      "Promotions": {
+        "total": 1,
+        "verified": 0
+      },
+      "Rules3": {
+        "total": 1,
+        "verified": 0
+      },
+      "SPOPriceInstallmentSanity": {
+        "total": 1,
+        "verified": 0
+      },
+      "UCPricePromotionCharSanityAPI": {
+        "total": 1,
+        "verified": 0
+      },
+      "bundleProductOffer": {
+        "total": 1,
+        "verified": 0
+      },
+      "bundleProductOffer2": {
+        "total": 1,
+        "verified": 0
+      },
+      "conflictResolution2": {
+        "total": 1,
+        "verified": 0
+      },
+      "dashExportTests2": {
+        "total": 1,
+        "verified": 0
+      },
+      "dashExportTests4": {
+        "total": 1,
+        "verified": 0
+      },
+      "exportFoundation": {
+        "total": 1,
+        "verified": 0
+      },
+      "exportFoundation4": {
+        "total": 1,
+        "verified": 0
+      },
+      "group21": {
+        "total": 1,
+        "verified": 1
+      },
+      "group81": {
+        "total": 1,
+        "verified": 0
+      },
+      "implsanity2": {
+        "total": 1,
+        "verified": 0
+      },
+      "manageItemsWithNoUIAndAudit": {
+        "total": 1,
+        "verified": 0
+      },
+      "mergeBR": {
+        "total": 1,
+        "verified": 0
+      },
+      "priceCharacteristicsSanity": {
+        "total": 1,
+        "verified": 0
+      },
+      "priceCharacteristicsTests": {
+        "total": 1,
+        "verified": 0
+      },
+      "priceGroup": {
+        "total": 1,
+        "verified": 0
+      },
+      "priceGroup2AndCategory": {
+        "total": 1,
+        "verified": 0
+      },
+      "priceVersions": {
+        "total": 1,
+        "verified": 0
+      },
+      "prices3": {
+        "total": 1,
+        "verified": 0
+      },
+      "pricesAndReplaceOfferMUPublishAPINotToRun": {
+        "total": 1,
+        "verified": 0
+      },
+      "productOfferingType2": {
+        "total": 1,
+        "verified": 0
+      },
+      "productSpecType": {
+        "total": 1,
+        "verified": 0
+      },
+      "publishBR-PurchaseLimitRule-API-tests": {
+        "total": 1,
+        "verified": 0
+      },
+      "publishBR-QualificationRule-API-tests": {
+        "total": 1,
+        "verified": 0
+      },
+      "publishBR-Rule-API-tests2": {
+        "total": 1,
+        "verified": 0
+      },
+      "publishBR-Rule-API-tests3": {
+        "total": 1,
+        "verified": 0
+      },
+      "publishBR-Rule-API-tests4": {
+        "total": 1,
+        "verified": 0
+      },
+      "publishBR-Rule-API-tests5": {
+        "total": 1,
+        "verified": 0
+      },
+      "publishBR-UI-tests1": {
+        "total": 1,
+        "verified": 0
+      },
+      "publishBR-UI-tests5": {
+        "total": 1,
+        "verified": 0
+      },
+      "publishBR-UI-tests6": {
+        "total": 1,
+        "verified": 0
+      },
+      "publishBR-ValidateRule-API-Sanity": {
+        "total": 1,
+        "verified": 0
+      },
+      "publishBRToTestEnv": {
+        "total": 1,
+        "verified": 0
+      },
+      "publishBRToTestEnvMultiUser1": {
+        "total": 1,
+        "verified": 0
+      },
+      "regression_13": {
+        "total": 1,
+        "verified": 0
+      },
+      "regression_16": {
+        "total": 1,
+        "verified": 0
+      },
+      "regression_20": {
+        "total": 1,
+        "verified": 0
+      },
+      "regression_21": {
+        "total": 1,
+        "verified": 0
+      },
+      "regression_22": {
+        "total": 1,
+        "verified": 0
+      },
+      "regression_26": {
+        "total": 1,
+        "verified": 0
+      },
+      "regression_27": {
+        "total": 1,
+        "verified": 0
+      },
+      "regression_31": {
+        "total": 1,
+        "verified": 0
+      },
+      "regression_37": {
+        "total": 1,
+        "verified": 0
+      },
+      "regression_6": {
+        "total": 1,
+        "verified": 0
+      },
+      "replaceOfferPriceVersionsDataConsistencyApi": {
+        "total": 1,
+        "verified": 0
+      },
+      "rulesNFTKpiComplexityLevelA": {
+        "total": 1,
+        "verified": 0
+      },
+      "runTimeTest2": {
+        "total": 1,
+        "verified": 0
+      },
+      "runTimeTest3": {
+        "total": 1,
+        "verified": 0
+      },
+      "searchAndFilterOptions": {
+        "total": 1,
+        "verified": 0
+      },
+      "uiSanityGE": {
+        "total": 1,
+        "verified": 0
+      },
+      "uiSanityPOGUpdateSPO": {
+        "total": 1,
+        "verified": 0
+      }
+    },
+    "per_kind": {
+      "api": {
+        "total": 24,
+        "verified": 0
+      },
+      "e2e": {
+        "total": 58,
+        "verified": 0
+      },
+      "ui": {
+        "total": 35,
+        "verified": 1
+      },
+      "unknown": {
+        "total": 2,
+        "verified": 0
+      }
+    },
+    "blocked": [],
+    "stale_ledger_rows": []
+  },
+  "gates": [
+    {
+      "id": "G1",
+      "description": "no time.sleep",
+      "passed": true,
+      "hits": [],
+      "hit_count": 0
+    },
+    {
+      "id": "G2",
+      "description": "no raw selectors in tests",
+      "passed": true,
+      "hits": [],
+      "hit_count": 0
+    },
+    {
+      "id": "G3",
+      "description": "no stubs left behind",
+      "passed": true,
+      "hits": [],
+      "hit_count": 0
+    },
+    {
+      "id": "G4",
+      "description": "migrated tests carry a kind marker and @allure.title",
+      "passed": true,
+      "hits": [],
+      "hit_count": 0
+    },
+    {
+      "id": "G5",
+      "description": "migrated tests are not skipped",
+      "passed": true,
+      "hits": [],
+      "hit_count": 0
+    },
+    {
+      "id": "G6",
+      "description": "no {{...}} placeholders in payloads",
+      "passed": true,
+      "hits": [],
+      "hit_count": 0
+    },
+    {
+      "id": "G7",
+      "description": "no password in parametrize",
+      "passed": true,
+      "hits": [],
+      "hit_count": 0
+    },
+    {
+      "id": "G8",
+      "description": "no ported factory classes",
+      "passed": true,
+      "hits": [],
+      "hit_count": 0
+    }
+  ]
+}

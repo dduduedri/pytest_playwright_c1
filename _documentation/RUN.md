@@ -100,12 +100,14 @@ So a plain `pytest` already writes the HTML report and Allure results into `repo
 
 
 
-## Full example (recommended)
+## Full example (typical run)
+
+> **Example tests are skipped by default.** A fresh clone runs green with all example tests skipped. Remove the `@pytest.mark.skip` marker from a test once its page object or API client points at your application.
 
 Browser + marker + parallel + tracing (HTML + Allure come from the `pytest.ini` defaults above):
 
 ```bash
-pytest --browser_name chrome -m full -n auto --tracing on
+pytest --browser_name chromium -m e2e -n auto --tracing on
 ```
 
 Then open the Allure report (see [Allure report](#allure-report)):
@@ -130,10 +132,11 @@ pytest -m smoke
 pytest -m smoke --headed --tracing on
 
 # Smoke + browser + parallel
-pytest --browser_name chrome -m smoke -n auto --tracing on
+pytest --browser_name chromium -m smoke -n auto --tracing on
 
-# Full suite
+# Full / regression markers (registered in pytest.ini; no example test uses them yet)
 pytest -m full
+pytest -m regression
 
 # Everything except smoke
 pytest -m "not smoke"
@@ -155,24 +158,24 @@ pytest -m full --co -q
 By file and test function name. Each test is parametrized per credential, and the case id is the **user key** from `data/input_data/credentials.json` (`user_a`, `user_b`, …), set via `ids=load_credential_ids()`:
 
 ```bash
-# Single smoke test (first user)
-pytest -s "tests/e2e/test_create_order_and_login.py::test_create_order_and_login[user_a]" --headed
+# Single smoke e2e test (first user)
+pytest -s "tests/e2e/test_api_login_then_ui_login.py::test_api_login_then_ui_login[user_a]" --headed
 
-# Single smoke test + tracing
-pytest -s "tests/e2e/test_create_order_and_login.py::test_create_order_and_login[user_a]" --headed --tracing on
+# Single smoke e2e test + tracing
+pytest -s "tests/e2e/test_api_login_then_ui_login.py::test_api_login_then_ui_login[user_a]" --headed --tracing on
 
 # Second user
-pytest -s "tests/e2e/test_create_order_and_login.py::test_create_order_and_login[user_b]" --headed --tracing on
+pytest -s "tests/e2e/test_api_login_then_ui_login.py::test_api_login_then_ui_login[user_b]" --headed --tracing on
 
-# Single full e2e test
-pytest -s "tests/e2e/test_create_order_and_verify_ui.py::test_create_order_and_verify_ui[user_a]" --headed --tracing on
+# Single UI login test
+pytest -s "tests/ui/test_login.py::test_login[user_a]" --headed --tracing on
 ```
 
 By name substring (`-k`):
 
 ```bash
 pytest -k user_a --headed --tracing on
-pytest -k "create_order and user_a" --headed
+pytest -k "login and user_a" --headed
 ```
 
 ---
@@ -184,9 +187,10 @@ pytest -k "create_order and user_a" --headed
 
 | Option                  | Values / example                          | Purpose                                                                                                                                                                                |
 | ----------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--env`                 | any key of `config/environment.json`      | Environment to run against; it supplies the app URL, the API host and the other service URLs. Defaults to `"environment"` in `config/execution.json`. An unknown name fails at startup and lists the valid ones |
 | `--browser_name`        | `chromium` (default), `firefox`, `webkit` | Playwright browser type launched by `browser_setup` (default from `config/execution.json`). Branded Google Chrome is selected via `browser_channel` in the config, not by this option. |
-| `--url`                 | `http://rahulshettyacademy.com/client`    | App URL (default from `config/execution.json`)                                                                                                                                         |
-| `-m`                    | `smoke`, `full`, `"not smoke"`            | Run tests by marker / tag (`pytest.ini`)                                                                                                                                               |
+| `--url`                 | `https://example.com`                     | Override the app URL for one run (default: the chosen environment's `ui`). Use `--env` to switch environments, since `--url` leaves the API and service URLs untouched                  |
+| `-m`                    | `smoke`, `e2e`, `ui`, `api`, `full`, `regression`, `"not smoke"` | Run tests by marker / tag (`pytest.ini`)                                                                                                                                  |
 | `-n`                    | `auto`, `3`, `4`                          | Parallel workers (`pytest-xdist`)                                                                                                                                                      |
 | `--tracing`             | `on`, `retain-on-failure`                 | Record Playwright traces. `on` keeps every trace; `retain-on-failure` discards the trace of a passing test. A failing test's trace is also attached to the Allure report                |
 | `--video`               | `on`, `retain-on-failure`, `off`          | Record a Playwright video per test; attached to the Allure report                                                                                                                      |
@@ -196,7 +200,7 @@ pytest -k "create_order and user_a" --headed
 | `--clean-alluredir`     | flag                                      | Clear old results before the run. Clears `allure-results` **and** (via `conftest.py`) the `reports-results/test-results` and `videos` folders, so every clean run starts fresh.        |
 | `--headed`              | flag                                      | Show the browser UI (pytest-playwright)                                                                                                                                                |
 | `-s`                    | flag                                      | Show print/stdout in the console                                                                                                                                                       |
-| `-k`                    | `create`, `"create or order"`             | Run tests matching a name expression                                                                                                                                                   |
+| `-k`                    | `login`, `"login and user_a"`             | Run tests matching a name expression                                                                                                                                                   |
 | `--co` / `--co -q`      | flag                                      | Collect/list tests without running                                                                                                                                                     |
 
 
@@ -212,13 +216,13 @@ Traces are saved by the `context_setup` fixture to:
 reports-results/test-results/<request.node.name>/trace.zip
 ```
 
-Actual folders from a recent full run (parametrized by user key — `user_a`, `user_b`):
+Actual folders from a recent e2e run (parametrized by user key — `user_a`, `user_b`):
 
 ```text
 reports-results/test-results/
-├── test_create_order_and_verify_ui[user_a]/
+├── test_api_login_then_ui_login[user_a]/
 │   └── trace.zip
-└── test_create_order_and_verify_ui[user_b]/
+└── test_api_login_then_ui_login[user_b]/
     └── trace.zip
 ```
 
@@ -241,16 +245,16 @@ After a run with `--tracing on` (or `retain-on-failure`), open the saved `trace.
 Uses the Playwright trace viewer installed with your venv (no upload). Quote paths that contain `[` / `]` / `@`:
 
 ```bash
-# Actual traces from the last full run (case id = user key)
-playwright show-trace "reports-results/test-results/test_create_order_and_verify_ui[user_a]/trace.zip"
-playwright show-trace "reports-results/test-results/test_create_order_and_verify_ui[user_b]/trace.zip"
+# Actual traces from the last e2e run (case id = user key)
+playwright show-trace "reports-results/test-results/test_api_login_then_ui_login[user_a]/trace.zip"
+playwright show-trace "reports-results/test-results/test_api_login_then_ui_login[user_b]/trace.zip"
 ```
 
 Windows PowerShell:
 
 ```powershell
-playwright show-trace ".\reports-results\test-results\test_create_order_and_verify_ui[user_a]\trace.zip"
-playwright show-trace ".\reports-results\test-results\test_create_order_and_verify_ui[user_b]\trace.zip"
+playwright show-trace ".\reports-results\test-results\test_api_login_then_ui_login[user_a]\trace.zip"
+playwright show-trace ".\reports-results\test-results\test_api_login_then_ui_login[user_b]\trace.zip"
 ```
 
 This opens a local browser window with the timeline, screenshots, network, and actions.
@@ -259,8 +263,8 @@ This opens a local browser window with the timeline, screenshots, network, and a
 
 1. Open: [https://trace.playwright.dev/](https://trace.playwright.dev/)
 2. Drag-and-drop a real file from this project, e.g.:
-  - `reports-results/test-results/test_create_order_and_verify_ui[user_a]/trace.zip`
-  - `reports-results/test-results/test_create_order_and_verify_ui[user_b]/trace.zip`
+  - `reports-results/test-results/test_api_login_then_ui_login[user_a]/trace.zip`
+  - `reports-results/test-results/test_api_login_then_ui_login[user_b]/trace.zip`
 
 The file is processed **in your browser** and is **not uploaded** to a server. Useful when you only have the zip and do not want to run the CLI.
 
@@ -274,13 +278,13 @@ Playwright records a video of each test's browser context. It's wired into the `
 
 ```bash
 # Record a video for every test
-pytest -m full --video on
+pytest -m e2e --video on
 
 # Record, but keep the video only for failing tests
-pytest -m full --video retain-on-failure
+pytest -m e2e --video retain-on-failure
 
 # Combine with tracing (both attached under the test in Allure)
-pytest --browser_name chrome -m full -n auto --tracing on --video on --clean-alluredir
+pytest --browser_name chromium -m e2e -n auto --tracing on --video on --clean-alluredir
 ```
 
 - Raw `.webm` files are saved to `reports-results/videos/<test-name>/`.
@@ -375,11 +379,11 @@ python -m pytest --co -q
 # Smoke
 python -m pytest -m smoke --clean-alluredir
 
-# Full suite + tracing
-python -m pytest --browser_name chrome -m full -n auto --tracing on --clean-alluredir
+# E2E example tests + tracing
+python -m pytest --browser_name chromium -m e2e -n auto --tracing on --clean-alluredir
 
 # Single test
-python -m pytest -s "tests/e2e/test_create_order_and_login.py::test_create_order_and_login[user_a]" --clean-alluredir
+python -m pytest -s "tests/e2e/test_api_login_then_ui_login.py::test_api_login_then_ui_login[user_a]" --clean-alluredir
 ```
 
 Raw JSON results land in `reports-results/allure-results/` (gitignored).
@@ -459,16 +463,16 @@ start reports-results\allure-report\index.html      # Windows
 
 The tests and page objects are instrumented so the report reads like the execution flow, not raw logs:
 
-- **Grouping** — `epic` (E-commerce) → `feature` → `story`, plus `severity` per test.
-- **Readable titles** — e.g. `Full E2E order flow · dudued@gmail.com`.
-- **Nested steps** with the **locator** and the **input/expected value** inline, for example:
-  - `UI · login and open dashboard`
-    - `Fill email · locator=#userEmail · input='dudued@gmail.com'`
-    - `Fill password · locator=#userPassword · input='***'`
-    - `Click login · locator=#login`
-  - `UI · verify order confirmation message`
-    - `Assert tagline · locator=//p[@class='tagline'] · expected='Thank you for Shopping With Us'`
-- **Attachments** — API request payloads, response status, auth token (truncated), and the created order id. Payloads go through `attach_json`, which masks any field whose name looks like a secret (`password`, `token`, `authorization`, …), so a request body cannot leak one.
+- **Grouping** — `epic` (Example) → `feature` → `story`, plus `severity` per test.
+- **Readable titles** — e.g. `E2E · API login + UI login · user_a@example.com`.
+- **Nested steps** with the **element name** and the **input/expected value** inline, for example:
+  - `UI · login (user: user_a@example.com)`
+    - `Fill 'Email' = 'user_a@example.com'`
+    - `Fill 'Password' = '***'`
+    - `Click 'Login'`
+  - `UI · verify the user is logged in`
+    - `Assert heading is visible · expected='Dashboard'`
+- **Attachments** — API request payloads, response status, and auth token (truncated). Payloads go through `attach_json`, which masks any field whose name looks like a secret (`password`, `token`, `authorization`, …), so a request body cannot leak one.
 - **Parameters** — each test is parametrized by **email only**. `allure-pytest` records every parameter's `repr()` and pytest prints the test's arguments in its traceback, so a credentials dict would put the password in the report twice over; the password is resolved inside the test from the `user_passwords` fixture instead.
 
 To add more detail later, use `allure.step(...)` in a page object / util, or `allure.attach(...)` for extra data (screenshots, JSON, etc.). Tests inherit it automatically — no per-test wiring needed.
@@ -517,20 +521,23 @@ pytest logs every fixture finalizer, and Allure renders higher-scope / yield-fin
 HTML + Allure are written to `reports-results/` by default (see [Output location](#output-location)), so most runs just add `--tracing on`:
 
 ```bash
-# All tests, default browser/url from config/execution.json
+# All tests, default browser from config/execution.json and url from config/environment.json
 pytest -s
 
 # Smoke only, headed
 pytest -m smoke --headed
 
-# Full suite, Firefox, parallel, traces on failure
-pytest --browser_name firefox -m full -n auto --tracing retain-on-failure
+# E2E example tests, Firefox, parallel, traces on failure
+pytest --browser_name firefox -m e2e -n auto --tracing retain-on-failure
 
 # Single file
-pytest -s tests/e2e/test_create_order_and_login.py --headed --tracing on
+pytest -s tests/e2e/test_api_login_then_ui_login.py --headed --tracing on
 
-# Custom URL
-pytest --url http://rahulshettyacademy.com/client -m smoke
+# Another environment (a key of config/environment.json)
+pytest --env c1-env-automation-testing-1444 -m ui
+
+# Custom URL, keeping everything else from the current environment
+pytest --url https://example.com -m smoke
 ```
 
 ---
@@ -556,7 +563,7 @@ pytest --markers            # show registered markers
 - All artifacts live under `reports-results/` (report.html, allure-results, allure-report, test-results/traces, videos) and the whole folder is gitignored — regenerate it locally after each run.
 - `--clean-alluredir` clears `allure-results` **and** `reports-results/test-results` + `videos` (via `conftest.py`), so a clean run leaves no stale artifacts behind.
 - HTML report and Allure results paths are defaulted in `pytest.ini` (`addopts`); pass `--html=` / `--alluredir=` to override.
-- Defaults for `--browser_name` and `--url` come from `config/execution.json` (loaded via `utils/config_reader.py` in `conftest.py`), which also sets `browser_channel`, `headless`, and `default_timeout_ms`.
-- **Browser version:** with `browser_channel: chrome` (the default), tests run the system-installed Google Chrome (auto-updated). Leave `browser_channel` empty to use Playwright's bundled Chromium, whose version is pinned to the installed `playwright` package. See [INSTALL.md → Controlling the browser version](INSTALL.md#controlling-the-browser-version) and the local mapping in `.venv/Lib/site-packages/playwright/driver/package/browsers.json`.
-- Test data lives under `data/` — user credentials in `data/input_data/credentials.json` (named keys `user_a`, `user_b`, …, gitignored), loaded via `utils/data_reader.py`. Tests parametrize over `load_credential_emails()` and label each case with the key via `ids=load_credential_ids()`; the password is looked up at run time from the `user_passwords` fixture so it never becomes a report parameter.
+- Defaults come from two config files, loaded via `utils/config_reader.py` in `conftest.py`'s `pytest_configure`: `config/environment.json` names the application under test (one entry per environment, keyed by environment name, with `ui` → the `--url` default, `apiHost`, and the optional `keycloakUrl`/`a3sUrl`/`posUrl`), and `config/execution.json` sets how the run behaves. Which environment is used is decided by `--env`, then by `"environment"` in `config/execution.json`, and finally — if the file defines exactly one — by that entry (`browser` → the `--browser_name` default, plus `browser_channel`, `headless`, `default_timeout_ms`, `test_id_attribute` for `get_by_test_id()`, and `ignore_https_errors` for environments with a self-signed certificate — it is applied both as the context option and as Chromium's `--ignore-certificate-errors` launch arg).
+- **Browser version:** the default config leaves `browser_channel` null, so tests use Playwright's bundled Chromium (version pinned to the installed `playwright` package). Set `browser_channel` to `"chrome"` (or another channel) in `config/execution.json` to run the system-installed Google Chrome instead. See [INSTALL.md → Controlling the browser version](INSTALL.md#controlling-the-browser-version) and the local mapping in `.venv/Lib/site-packages/playwright/driver/package/browsers.json`.
+- Test data lives under `data/` — user credentials in `data/input_data/credentials.json` (named keys such as `default`, `editor`, …; gitignored and never committed, so create it per machine). Records use `user` and `password` fields, and the `default` record is the account the `logged_in_page` fixture signs in with before a UI test starts. Tests parametrize over `load_credential_users()` and label each case with the key via `ids=load_credential_ids()`; the password is looked up at run time from the `user_passwords` fixture so it stays out of the report. Those two list helpers run at import time, so a missing credentials file yields no cases instead of breaking collection — anything that really needs a user (`login_user`, `load_credential`) fails loudly with the file path instead.
 

@@ -1,0 +1,16 @@
+{
+  "c1-env-auto-testing-auth-1445": {
+    "ui": "https://c1-web-ui-c1-env-auto-testing-auth-1445.apps.ilocpc1445.ocpd.corp.amdocs.com/catalog-one-ui",
+    "apiHost": "https://amd-apigw-c1-env-auto-testing-auth-1445.apps.ilocpc1445.ocpd.corp.amdocs.com",
+    "keycloakUrl": "https://ms360-keycloak.c1-env-auto-testing-auth-1445.apps.ilocpc1445.ocpd.corp.amdocs.com/auth/realms/c1-env-auto-testing-auth-1445",
+    "a3sUrl": "https://asm-services-c1-env-auto-testing-auth-1445.apps.ilocpc1445.ocpd.corp.amdocs.com/asmServices/services/v1.0/auth/tokens",
+    "posUrl": "https://product-offering-service-c1-env-auto-testing-rt-1445.apps.ilocpc1445.ocpd.corp.amdocs.com"
+  },
+  "c1-env-automation-testing-1444": {
+    "ui": "https://c1-web-ui-c1-env-automation-testing-1444.apps.ilocpc1444.ocpd.corp.amdocs.com/catalog-one-ui",
+    "apiHost": "https://amd-apigw-c1-env-automation-testing-1444.apps.ilocpc1444.ocpd.corp.amdocs.com",
+    "keycloakUrl": "https://ms360-keycloak.c1-env-automation-testing-1444.apps.ilocpc1444.ocpd.corp.amdocs.com/auth/realms/c1-env-automation-testing-1444",
+    "a3sUrl": "https://asm-services-c1-env-automation-testing-1444.apps.ilocpc1444.ocpd.corp.amdocs.com/asmServices/services/v1.0/auth/tokens",
+    "posUrl": "https://product-offering-service-c1-env-automation-testing-1444.apps.ilocpc1444.ocpd.corp.amdocs.com"
+  }
+}

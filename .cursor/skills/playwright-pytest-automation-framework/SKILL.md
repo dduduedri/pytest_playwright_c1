@@ -4,7 +4,7 @@ description: >
   Create, review, and extend a Python automation framework using Playwright,
   pytest, OOP page objects, reusable UI elements, API clients, Allure reporting,
   execution configuration, and external test data.
-version: 1.1.0
+version: 2.0.0
 ---
 
 # Playwright Pytest Automation Framework
@@ -27,6 +27,11 @@ automation framework that contains:
 The framework must remain simple enough for a new project while allowing future
 growth without major restructuring.
 
+For porting tests out of the legacy Java/TestNG framework, use the
+`migrate-java-tests-to-pytest` skill together with this one: it adds the
+translation tables, the per-test ledger, and the migration percentage report,
+while the rules below still decide what the resulting code must look like.
+
 ---
 
 # Required Project Structure
@@ -40,8 +45,7 @@ playwright-pytest-framework/
 │   ├── pages/
 │   │   ├── __init__.py
 │   │   ├── base_page.py
-│   │   ├── login_page.py
-│   │   └── dashboard_page.py
+│   │   └── login_page.py
 │   ├── elements/
 │   │   ├── __init__.py
 │   │   ├── base_element.py
@@ -50,9 +54,7 @@ playwright-pytest-framework/
 │   │   ├── checkbox.py
 │   │   └── dropdown.py
 │   └── components/
-│       ├── __init__.py
-│       ├── header.py
-│       └── navigation_menu.py
+│       └── __init__.py
 ├── api/
 │   ├── __init__.py
 │   ├── base_api.py
@@ -61,31 +63,29 @@ playwright-pytest-framework/
 │   │   ├── auth_api.py
 │   │   └── users_api.py
 │   └── models/
-│       ├── __init__.py
-│       └── user.py
+│       └── __init__.py
 ├── tests/
 │   ├── __init__.py
 │   ├── ui/
 │   │   ├── __init__.py
-│   │   ├── test_login.py
-│   │   └── test_dashboard.py
+│   │   └── test_login.py
 │   ├── api/
 │   │   ├── __init__.py
-│   │   └── test_users_api.py
+│   │   └── test_auth_api.py
 │   └── e2e/
 │       ├── __init__.py
-│       └── test_create_user_and_verify_ui.py
+│       └── test_api_login_then_ui_login.py
 ├── config/
-│   ├── execution.json
-│   └── environments.json
+│   ├── environment.json       # one entry per environment (the target app's URLs)
+│   └── execution.json         # environment choice, browser, headless, timeouts
 ├── data/
 │   ├── input_data/            # concrete values (credentials, request inputs)
-│   │   └── credentials.json
+│   │   └── credentials.json   # git-ignored; created per machine
 │   ├── api_payloads/          # request-shape templates with <placeholders>
 │   │   ├── login.json
-│   │   └── create_order.json
+│   │   └── create_user.json
 │   └── expected_results/
-│       └── order_confirmation.json
+│       └── login.json
 ├── utils/
 │   ├── __init__.py
 │   ├── config_reader.py
@@ -171,6 +171,10 @@ API performs cleanup when appropriate
     without a current use case.
 14. Use type hints for public methods and fixtures.
 15. Use explicit error messages when configuration or data is missing.
+16. This repository is a **template**: the example `LoginPage`, `AuthApi`, and the three
+    example tests are references to replace. Example tests carry `@pytest.mark.skip`
+    until they point at a real application. Do not commit product-specific values into
+    `config/` or `data/`.
 
 ---
 
@@ -189,50 +193,44 @@ A page object must:
 - Avoid direct test-data loading
 - Avoid browser lifecycle management
 
-Example:
+Example (EXAMPLE page object — replace locators for your application):
 
 ```python
 import allure
-from playwright.sync_api import Page
+from playwright.sync_api import expect
 
 from ui.elements.button import Button
 from ui.elements.text_box import TextBox
 from ui.pages.base_page import BasePage
+from utils.data_reader import load_expected_result
 
 
 class LoginPage(BasePage):
-    PATH = "/login"
 
-    def __init__(self, page: Page, base_url: str) -> None:
-        super().__init__(page, base_url)
+    def __init__(self, page):
+        super().__init__(page)
+        self.email = TextBox(page.get_by_label("Email"), "Email")
+        self.password = TextBox(page.get_by_label("Password"), "Password")
+        self.login_button = Button(page.get_by_role("button", name="Login"), "Login")
 
-        self.username = TextBox(
-            page.get_by_label("Username"),
-            "Username",
-        )
-        self.password = TextBox(
-            page.get_by_label("Password"),
-            "Password",
-        )
-        self.login_button = Button(
-            page.get_by_role("button", name="Login"),
-            "Login",
-        )
-        self.dashboard_title = page.get_by_role(
-            "heading",
-            name="Dashboard",
-        )
-
-    @allure.step("Open login page")
-    def open_login_page(self) -> None:
-        self.open(self.PATH)
-
-    @allure.step("Login as user: {username}")
-    def login(self, username: str, password: str) -> None:
-        self.username.fill(username)
-        self.password.fill(password, sensitive=True)
+    def login(self, email, password):
+        self.email.fill(email)
+        self.password.fill(password, mask=True)
         self.login_button.click()
+
+    def login_and_continue(self, email, password) -> None:
+        with allure.step(f"UI · login (user: {email})"):
+            self.login(email, password)
+
+    @allure.step("UI · verify the user is logged in")
+    def verify_logged_in(self) -> None:
+        expected_heading = load_expected_result("login")["logged_in_heading"]
+        with allure.step(f"Assert heading is visible · expected='{expected_heading}'"):
+            expect(self.page.get_by_role("heading", name=expected_heading)).to_be_visible()
 ```
+
+Navigation to the application URL is handled by the `context_setup` fixture (via
+`--url` / `config/environment.json`), not by the page object.
 
 ## Base Page
 
@@ -241,8 +239,7 @@ Keep `BasePage` small.
 Allowed responsibilities include:
 
 - Storing `Page`
-- Storing the UI base URL
-- Opening a relative application path
+- Navigating to an absolute URL when a page genuinely needs it
 - Common page-level waiting that is genuinely shared
 
 Do not wrap every Playwright method.
@@ -252,12 +249,10 @@ from playwright.sync_api import Page
 
 
 class BasePage:
-    def __init__(self, page: Page, base_url: str) -> None:
+    def __init__(self, page: Page):
         self.page = page
-        self.base_url = base_url.rstrip("/")
 
-    def open(self, path: str = "") -> None:
-        url = f"{self.base_url}/{path.lstrip('/')}"
+    def goto(self, url: str):
         self.page.goto(url)
 ```
 
@@ -355,12 +350,10 @@ from ui.elements.base_element import BaseElement
 
 
 class TextBox(BaseElement):
-    def fill(self, value: str, *, sensitive: bool = False) -> None:
-        displayed_value = "***" if sensitive else value
+    def fill(self, value: str, mask: bool = False) -> None:
+        shown = "***" if mask else value
 
-        with allure.step(
-            f"Fill text box '{self.name}' with '{displayed_value}'"
-        ):
+        with allure.step(f"Fill '{self.name}' = '{shown}'"):
             self.locator.fill(value)
 
     def clear(self) -> None:
@@ -394,8 +387,8 @@ Use composition:
 
 ```python
 class DashboardPage(BasePage):
-    def __init__(self, page: Page, base_url: str) -> None:
-        super().__init__(page, base_url)
+    def __init__(self, page):
+        super().__init__(page)
         self.header = Header(page)
         self.navigation = NavigationMenu(page)
 ```
@@ -419,64 +412,46 @@ Place shared request execution in `api/base_api.py`.
 
 Responsibilities:
 
-- Execute HTTP methods
+- Execute HTTP methods, one wrapper per verb
 - Apply common headers
-- Handle expected status codes
-- Provide useful failure messages
-- Return Playwright `APIResponse`
+- Record each call as an Allure step
+- Attach response metadata, and the body when the call failed
+- Mask secret-looking fields in every attached payload
+- Return Playwright `APIResponse`, so clients decide what a failure means
+
+Status checking stays in the domain client (an assertion with a domain message), not in
+`BaseApi`; that keeps the base free of per-endpoint expectations.
 
 ```python
-from collections.abc import Collection
-from typing import Any
-
-import allure
-from playwright.sync_api import APIRequestContext, APIResponse
-
-
-class ApiRequestError(RuntimeError):
-    pass
-
-
 class BaseApi:
-    def __init__(self, request_context: APIRequestContext) -> None:
+    def __init__(self, request_context: APIRequestContext):
         self.request_context = request_context
 
-    def request(
-        self,
-        method: str,
-        endpoint: str,
-        *,
-        data: dict[str, Any] | None = None,
-        params: dict[str, Any] | None = None,
-        headers: dict[str, str] | None = None,
-        expected_status: int | Collection[int] = 200,
-    ) -> APIResponse:
-        with allure.step(f"{method.upper()} {endpoint}"):
-            response = self.request_context.fetch(
-                endpoint,
-                method=method,
-                data=data,
-                params=params,
-                headers=headers,
-                fail_on_status_code=False,
+    def _default_headers(self, headers):
+        merged = {"Content-Type": "application/json"}
+        if headers:
+            merged.update(headers)
+        return merged
+
+    def _attach_response(self, response: APIResponse) -> None:
+        attach_text("response · meta", f"status: {response.status}\nurl: {response.url}")
+        if response.status < 400:
+            return
+        attach_text("response · error body", response.text()[:2000])
+
+    def post(self, endpoint, data=None, headers=None):
+        with allure.step(f"POST {endpoint}"):
+            response = self.request_context.post(
+                endpoint, data=data, headers=self._default_headers(headers)
             )
-
-            valid_statuses = (
-                {expected_status}
-                if isinstance(expected_status, int)
-                else set(expected_status)
-            )
-
-            if response.status not in valid_statuses:
-                raise ApiRequestError(
-                    f"{method.upper()} {endpoint} failed. "
-                    f"Expected {sorted(valid_statuses)}, "
-                    f"received {response.status}. "
-                    f"Response: {response.text()}"
-                )
-
+            self._attach_response(response)
+            log.info("POST %s -> %s", endpoint, response.status)
             return response
 ```
+
+`get`, `put` and `delete` follow the same shape. `attach_json` runs every payload through
+`mask_secrets`, so any key containing `password`, `token`, `authorization`, `secret` or
+`apikey` is redacted before it reaches the report.
 
 ## API Clients
 
@@ -489,7 +464,6 @@ Good:
 ```text
 auth_api.py
 users_api.py
-orders_api.py
 ```
 
 Avoid:
@@ -500,38 +474,32 @@ post_requests.py
 delete_requests.py
 ```
 
-Example:
+Example (EXAMPLE API client — replace the endpoint and response field for your API):
 
 ```python
 import allure
-from playwright.sync_api import APIRequestContext, APIResponse
 
-from api.base_api import BaseApi
+from api.base_api import BaseApi, attach_json, attach_text
+from utils.data_reader import load_api_payload
+
+LOGIN_ENDPOINT = "/api/auth/login"
 
 
-class UsersApi(BaseApi):
-    def __init__(self, request_context: APIRequestContext) -> None:
-        super().__init__(request_context)
+class AuthApi(BaseApi):
 
-    @allure.step("Get user: {user_id}")
-    def get_user(self, user_id: int) -> APIResponse:
-        return self.request(
-            "GET",
-            f"/users/{user_id}",
-            expected_status=200,
-        )
+    def login(self, email, password) -> str:
+        with allure.step(f"API · get auth token (user: {email})"):
+            payload = load_api_payload("login", email=email, password=password)
+            attach_json("request · login payload", payload)
 
-    @allure.step("Create user: {email}")
-    def create_user(self, name: str, email: str) -> APIResponse:
-        return self.request(
-            "POST",
-            "/users",
-            data={
-                "name": name,
-                "email": email,
-            },
-            expected_status={200, 201},
-        )
+            response = self.post(LOGIN_ENDPOINT, data=payload)
+
+            assert response.ok, (
+                f"Login failed for {email} (status {response.status}): {response.text()}"
+            )
+            token = response.json()["token"]
+            attach_text("output · auth token (truncated)", f"{token[:12]}…")
+            return token
 ```
 
 ## API Models
@@ -582,26 +550,22 @@ UI tests should:
 - Avoid browser setup inside the test
 
 ```python
+import allure
 import pytest
-from playwright.sync_api import expect
 
 from ui.pages.login_page import LoginPage
-from utils.credentials import UserCredentials
+from utils.data_reader import load_credential_ids, load_credential_users
 
 
 @pytest.mark.ui
-@pytest.mark.smoke
-def test_successful_login(
-    login_page: LoginPage,
-    admin_user: UserCredentials,
-) -> None:
-    login_page.open_login_page()
-    login_page.login(
-        username=admin_user.username,
-        password=admin_user.password,
-    )
+@pytest.mark.skip(reason="Template example - update LoginPage for your app, then remove this marker")
+@pytest.mark.parametrize("user", load_credential_users(), ids=load_credential_ids())
+def test_login(context_setup, user, user_passwords):
+    user_password = user_passwords[user]
 
-    expect(login_page.dashboard_title).to_be_visible()
+    login_page = LoginPage(context_setup)
+    login_page.login_and_continue(user, user_password)
+    login_page.verify_logged_in()
 ```
 
 ## API Tests
@@ -609,17 +573,20 @@ def test_successful_login(
 Place API tests under `tests/api`.
 
 ```python
+import allure
 import pytest
 
-from api.clients.users_api import UsersApi
+from api.clients.auth_api import AuthApi
+from utils.data_reader import load_credential_ids, load_credential_users
 
 
 @pytest.mark.api
-def test_get_user(users_api: UsersApi) -> None:
-    response = users_api.get_user(1)
+@pytest.mark.skip(reason="Template example - update AuthApi for your app, then remove this marker")
+@pytest.mark.parametrize("user", load_credential_users(), ids=load_credential_ids())
+def test_login_returns_token(auth_api: AuthApi, user, user_passwords):
+    token = auth_api.login(user, user_passwords[user])
 
-    assert response.status == 200
-    assert response.json()["id"] == 1
+    assert token, "expected an auth token in the login response"
 ```
 
 ## E2E Tests
@@ -633,20 +600,68 @@ be verified through the browser.
 
 # Configuration
 
-Place framework execution settings under `config`.
+Place framework settings under `config`, split by the question they answer.
 
-Recommended `config/execution.json`:
+`config/environment.json` — WHERE the run points: one entry per environment, keyed by
+environment name, so several environments live side by side. `ui` and `apiHost` are
+required; add only the extra service URLs the suite actually calls.
 
 ```json
 {
-  "application_url": "http://rahulshettyacademy.com/client",
-  "api_url": "https://api.example.com",
-  "browser": "chromium",
-  "browser_channel": "chrome",
-  "headless": false,
-  "default_timeout_ms": 30000
+  "my-env": {
+    "ui": "https://example.com",
+    "apiHost": "https://api.example.com",
+    "keycloakUrl": "https://keycloak.example.com/auth/realms/my-env"
+  }
 }
 ```
+
+`config/execution.json` — HOW the run behaves, plus the default environment
+(`environment` is needed only when environment.json defines more than one):
+
+```json
+{
+  "environment": "my-env",
+  "browser": "chromium",
+  "browser_channel": null,
+  "headless": false,
+  "default_timeout_ms": 30000,
+  "test_id_attribute": "data-testid",
+  "ignore_https_errors": false
+}
+```
+
+Keeping the target application in its own file means switching environment never touches
+run settings: adding an environment is a new entry, and running against it is
+`pytest --env <name>`.
+
+Resolve the choice in one place, `pytest_configure`, and expose it through the
+`execution_config` fixture, so an unknown `--env` fails once at startup as a
+`pytest.UsageError` (listing the available names) instead of breaking every test's setup:
+
+```python
+# conftest.py
+def pytest_addoption(parser):
+    # every custom option defaults to None and falls back to the config at use time,
+    # so --env is what decides which environment's values are read
+    parser.addoption("--env", action="store", default=None, help="a key of config/environment.json")
+
+
+def pytest_configure(config):
+    try:
+        config.execution_config = ExecutionConfig.load(config.getoption("--env"))
+    except (KeyError, FileNotFoundError, ValueError) as error:
+        raise pytest.UsageError(error.args[0]) from None
+
+
+@pytest.fixture(scope="session")
+def execution_config(request) -> ExecutionConfig:
+    return request.config.execution_config
+```
+
+Do not load the config at import time to feed option defaults: `pytest_addoption` runs
+before the command line is parsed, so those defaults would come from the wrong
+environment.
 
 Use:
 
@@ -685,40 +700,75 @@ nested configuration.
 import json
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-EXECUTION_FILE = PROJECT_ROOT / "config" / "execution.json"
+CONFIG_DIR = PROJECT_ROOT / "config"
+ENVIRONMENT_CONFIG = CONFIG_DIR / "environment.json"
+EXECUTION_CONFIG = CONFIG_DIR / "execution.json"
+
+
+def _read_config(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        raise FileNotFoundError(f"Configuration file was not found: {path}")
+    with path.open(encoding="utf-8") as config_file:
+        return json.load(config_file)
 
 
 @dataclass(frozen=True)
 class ExecutionConfig:
+    environment_name: str
     application_url: str
     api_url: str
+    keycloak_url: str | None
     browser: str
     browser_channel: str | None
     headless: bool
     default_timeout_ms: int
+    test_id_attribute: str
+    ignore_https_errors: bool
 
     @classmethod
-    def load(cls) -> "ExecutionConfig":
-        if not EXECUTION_FILE.exists():
-            raise FileNotFoundError(
-                f"Execution configuration was not found: {EXECUTION_FILE}"
-            )
+    def load(cls, environment_name: str | None = None) -> "ExecutionConfig":
+        environments = _read_config(ENVIRONMENT_CONFIG)
+        execution = _read_config(EXECUTION_CONFIG)
 
-        with EXECUTION_FILE.open(encoding="utf-8") as file:
-            data = json.load(file)
+        # the run's choice (--env) wins; then the config default; one environment
+        # needs no choosing at all
+        name = environment_name or execution.get("environment")
+        if not name:
+            if len(environments) != 1:
+                raise KeyError(
+                    f"{ENVIRONMENT_CONFIG} defines several environments. Set "
+                    f'"environment" in {EXECUTION_CONFIG} to one of: {", ".join(environments)}.'
+                )
+            name = next(iter(environments))
+        environment = environments[name]
+
+        for required_key in ("ui", "apiHost"):
+            if not environment.get(required_key):
+                raise KeyError(
+                    f"'{required_key}' is missing from environment '{name}' in "
+                    f"{ENVIRONMENT_CONFIG}. Set it to your application's URL."
+                )
 
         return cls(
-            application_url=data["application_url"],
-            api_url=data["api_url"],
-            browser=data.get("browser", "chromium"),
-            browser_channel=data.get("browser_channel"),
-            headless=data.get("headless", True),
-            default_timeout_ms=data.get("default_timeout_ms", 30000),
+            environment_name=name,
+            application_url=environment["ui"],
+            api_url=environment["apiHost"],
+            keycloak_url=environment.get("keycloakUrl"),
+            browser=execution.get("browser", "chromium"),
+            browser_channel=execution.get("browser_channel"),
+            headless=execution.get("headless", True),
+            default_timeout_ms=execution.get("default_timeout_ms", 30000),
+            test_id_attribute=execution.get("test_id_attribute", "data-testid"),
+            ignore_https_errors=execution.get("ignore_https_errors", False),
         )
 ```
+
+One typed object merges both files, so fixtures and tests keep a single dependency
+(`execution_config`) while the files stay separate on disk.
 
 ---
 
@@ -729,12 +779,12 @@ Place test data under `data`, split by role:
 ```text
 data/
 ├── input_data/                 # concrete VALUES a test feeds in
-│   └── credentials.json        # per-user login records (git-ignored)
+│   └── credentials.json           # per-user login records (git-ignored)
 ├── api_payloads/               # request-body SHAPES (templates with <placeholders>)
 │   ├── login.json
-│   └── create_order.json
+│   └── create_user.json
 └── expected_results/           # expected values assertions compare against
-    └── order_confirmation.json
+    └── login.json
 ```
 
 Keep the two data roles separate:
@@ -744,15 +794,21 @@ Keep the two data roles separate:
   hard-coded there; they are injected via placeholders — either passed directly at the
   call site or sourced from `input_data`.
 
-`credentials.json` maps a named key to each user record and must not contain real
-production passwords; keep the file out of version control:
+`credentials.json` maps a named key to each user record. It holds real accounts, so it
+stays out of version control and is created per machine and per CI runner. The `default`
+key is the account UI tests log in with; add more keys for other roles:
 
 ```json
 {
-  "user_a": { "userEmail": "a@example.com", "UserPassword": "..." },
-  "user_b": { "userEmail": "b@example.com", "UserPassword": "..." }
+  "default": { "user": "my_user", "password": "change-me" },
+  "editor": { "user": "my_editor", "password": "change-me" }
 }
 ```
+
+Because `@parametrize` runs at import time, the helpers that feed it
+(`load_credential_users()`, `load_credential_ids()`) return no cases when the file is
+absent instead of breaking collection for the whole suite; anything that really needs a
+user (`load_credential`, the `login_user` fixture) fails loudly with the expected path.
 
 For truly sensitive values, prefer `.env`, CI credentials, or a secret manager and
 commit `.env.example`, not `.env`.
@@ -763,13 +819,12 @@ Payload files under `api_payloads/` may contain `<placeholder>` tokens that are
 substituted at load time. This keeps the request *shape* in one file while the *values*
 are supplied at the call site, so the same template serves many cases.
 
-`data/api_payloads/create_order.json` (shape only):
+`data/api_payloads/create_user.json` (shape only):
 
 ```json
 {
-  "orders": [
-    { "country": "<country>", "productOrderedId": "<productOrderedId>" }
-  ]
+  "name": "<name>",
+  "email": "<email>"
 }
 ```
 
@@ -777,11 +832,11 @@ Substitution happens in `load_api_payload(name, **params)` — pass the values d
 
 ```python
 payload = load_api_payload(
-    "create_order",
-    country="India",
-    productOrderedId="6960eac0c941646b7a8b3e68",
+    "create_user",
+    name="Jane Doe",
+    email="jane@example.com",
 )
-# -> {"orders": [{"country": "India", "productOrderedId": "6960eac0c941646b7a8b3e68"}]}
+# -> {"name": "Jane Doe", "email": "jane@example.com"}
 ```
 
 Values may be literals at the call site (above) or sourced from a data file when they
@@ -796,8 +851,8 @@ Rules for the substitution engine:
   `<placeholder>` never reaches the API.
 
 Because login credentials in this project are not treated as production secrets, the
-login body is also a template (`api_payloads/login.json` with `<userEmail>` /
-`<userPassword>`) fed from `input_data/credentials.json`. If credentials were real
+login body is also a template (`api_payloads/login.json` with `<email>` /
+`<password>`) fed from `input_data/credentials.json`. If credentials were real
 secrets, keep them out of committed files and inject from the environment instead.
 
 ## Data Reader
@@ -812,6 +867,7 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 INPUT_DATA_DIR = DATA_DIR / "input_data"
+CREDENTIALS_FILE = INPUT_DATA_DIR / "credentials.json"
 _PLACEHOLDER = re.compile(r"<([^<>]+)>")
 
 
@@ -822,14 +878,48 @@ def _read_json(path: Path) -> Any:
         return json.load(file)
 
 
-def _render(value: Any, params: dict, source: str) -> Any:
+def _read_credentials() -> dict:
+    if not CREDENTIALS_FILE.exists():
+        raise FileNotFoundError(
+            f"No credentials file was found at {CREDENTIALS_FILE}. Create it with at "
+            f'least a "default" user: {{"default": {{"user": "...", "password": "..."}}}}.'
+        )
+    return _read_json(CREDENTIALS_FILE)
+
+
+def load_credentials() -> list[dict]:
+    return list(_read_credentials().values())
+
+
+def load_credential(key: str) -> dict:
+    users = _read_credentials()
+    if key not in users:
+        raise KeyError(f"User '{key}' was not found in {CREDENTIALS_FILE}.")
+    return users[key]
+
+
+# the two helpers below feed @parametrize, which runs at import time: with no
+# credentials file they yield no cases instead of failing collection
+def load_credential_ids() -> list[str]:
+    return list(_read_credentials().keys()) if CREDENTIALS_FILE.exists() else []
+
+
+def load_credential_users() -> list[str]:
+    return [record["user"] for record in load_credentials()] if CREDENTIALS_FILE.exists() else []
+
+
+def load_passwords_by_user() -> dict[str, str]:
+    return {record["user"]: record["password"] for record in load_credentials()}
+
+
+def _render_placeholders(value: Any, params: dict, source: str) -> Any:
     if isinstance(value, dict):
-        return {k: _render(v, params, source) for k, v in value.items()}
+        return {k: _render_placeholders(v, params, source) for k, v in value.items()}
     if isinstance(value, list):
-        return [_render(v, params, source) for v in value]
+        return [_render_placeholders(v, params, source) for v in value]
     if isinstance(value, str):
         exact = _PLACEHOLDER.fullmatch(value)
-        if exact:                                   # keep native type
+        if exact:
             return _lookup(exact.group(1), params, source)
         return _PLACEHOLDER.sub(lambda m: str(_lookup(m.group(1), params, source)), value)
     return value
@@ -837,15 +927,13 @@ def _render(value: Any, params: dict, source: str) -> Any:
 
 def _lookup(token: str, params: dict, source: str) -> Any:
     if token not in params:
-        raise KeyError(f"Payload '{source}' needs placeholder <{token}>; not provided.")
+        raise KeyError(f"Payload '{source}' needs placeholder <{token}>, not provided.")
     return params[token]
 
 
 def load_api_payload(name: str, **params: Any) -> dict:
-    """Request-body TEMPLATE from data/api_payloads/<name>.json with <placeholders>
-    replaced by the given keyword arguments."""
     payload = _read_json(DATA_DIR / "api_payloads" / f"{name}.json")
-    return _render(payload, params, name)
+    return _render_placeholders(payload, params, name)
 ```
 
 ## Stable Parametrize IDs
@@ -853,22 +941,22 @@ def load_api_payload(name: str, **params: Any) -> dict:
 When parametrizing over records (dicts), pytest falls back to positional ids like
 `user_credential0`. Provide readable ids so console output, the `[...]` node id, and
 per-test artifact folders are meaningful. If the data file maps named keys to records,
-expose the keys as ids:
+expose the keys as ids via `load_credential_ids()`.
+
+**Do not parametrize over passwords.** Allure records every test parameter and pytest
+prints test arguments in tracebacks. Parametrize over the **login name** only and resolve
+the password from the `user_passwords` fixture at run time:
 
 ```python
-def load_credentials() -> list[dict]:
-    return list(_read_json(INPUT_DATA_DIR / "credentials.json").values())
-
-def load_credential_ids() -> list[str]:
-    return list(_read_json(INPUT_DATA_DIR / "credentials.json").keys())
-
-
-@pytest.mark.parametrize("user", load_credentials(), ids=load_credential_ids())
-def test_login(user): ...
+@pytest.mark.parametrize("user", load_credential_users(), ids=load_credential_ids())
+def test_login(context_setup, user, user_passwords):
+    user_password = user_passwords[user]
+    ...
 ```
 
 `ids=` accepts a list (matched to values by position) or a callable that receives each
-value. Keep the credentials file out of version control (it holds secrets).
+value. `credentials.json` holds real accounts, so it stays out of version control and is
+created per machine.
 
 ---
 
@@ -897,27 +985,25 @@ pytest_plugins = (
 
 ## UI Fixture
 
+The `context_setup` fixture opens a fresh browser context and page for each test,
+registers console/network listeners, navigates to the application URL (`--url`, or the
+chosen environment's `ui`), and attaches failure artifacts on teardown. Page objects
+receive the yielded `page` only:
+
 ```python
 import pytest
-from playwright.sync_api import Page
+from playwright.sync_api import Browser
 
-from ui.pages.login_page import LoginPage
 from utils.config_reader import ExecutionConfig
 
 
-@pytest.fixture
-def login_page(
-    page: Page,
-    execution_config: ExecutionConfig,
-) -> LoginPage:
-    page.set_default_timeout(
-        execution_config.default_timeout_ms
-    )
-
-    return LoginPage(
-        page=page,
-        base_url=execution_config.application_url,
-    )
+@pytest.fixture(scope="function")
+def context_setup(browser_setup: Browser, request, execution_config: ExecutionConfig):
+    page = browser_setup.new_context().new_page()
+    page.set_default_timeout(execution_config.default_timeout_ms)
+    page.goto(url=request.config.getoption("--url") or execution_config.application_url)
+    yield page
+    # teardown: traces, screenshots, video, console/network (see Rich Failure Artifacts)
 ```
 
 ## API Fixture
@@ -928,7 +1014,7 @@ from collections.abc import Iterator
 import pytest
 from playwright.sync_api import APIRequestContext, Playwright
 
-from api.clients.users_api import UsersApi
+from api.clients.auth_api import AuthApi
 from utils.config_reader import ExecutionConfig
 
 
@@ -939,10 +1025,6 @@ def api_context(
 ) -> Iterator[APIRequestContext]:
     context = playwright.request.new_context(
         base_url=execution_config.api_url,
-        extra_http_headers={
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-        },
     )
 
     yield context
@@ -951,8 +1033,8 @@ def api_context(
 
 
 @pytest.fixture
-def users_api(api_context: APIRequestContext) -> UsersApi:
-    return UsersApi(api_context)
+def auth_api(api_context: APIRequestContext) -> AuthApi:
+    return AuthApi(api_context)
 ```
 
 Use `yield` fixtures for resources that require cleanup.
@@ -974,8 +1056,8 @@ Place business-level steps on:
 Example:
 
 ```python
-@allure.step("Login as user: {username}")
-def login(self, username: str, password: str) -> None:
+@allure.step("UI · login (user: {email})")
+def login_and_continue(self, email, password) -> None:
     ...
 ```
 
@@ -991,9 +1073,9 @@ with allure.step(f"Click button: {self.name}"):
 Expected report:
 
 ```text
-Login as user: admin@example.com
-├── Fill text box 'Username' with 'admin@example.com'
-├── Fill text box 'Password' with '***'
+UI · login (user: admin@example.com)
+├── Fill 'Email' = 'admin@example.com'
+├── Fill 'Password' = '***'
 └── Click button: Login
 ```
 
@@ -1030,19 +1112,25 @@ def pytest_runtest_makereport(
     )
 ```
 
-Recommended pytest-playwright options:
-
-```ini
-[pytest]
-addopts =
-    --tracing=retain-on-failure
-    --screenshot=only-on-failure
-```
+The hook above is the minimal version. This framework instead captures the screenshot in
+the `context_setup` teardown, where the trace, video and browser logs are also available,
+and uses `pytest_runtest_makereport` only to record each phase's result and build the
+readable traceback.
 
 ## Rich Failure Artifacts
 
-On failure, attach diagnostic evidence in one place (a function-scoped context/page
-fixture teardown), gated so passing tests stay clean. Useful attachments:
+On failure, attach diagnostic evidence in one place (the `context_setup` teardown for
+UI tests, or the `api_context` teardown for API-only tests), gated so passing tests
+stay clean. Group attachments under four named `allure.step` sections; create a section
+only when it has content:
+
+- **Playwright trace** — trace zip plus a pointer on how to open it.
+- **Automation trace code** — readable, project-scoped failure traceback.
+- **UI screenshot/video** — full-page screenshot and/or execution recording.
+- **Browser console/network** — console errors/warnings, page exceptions, network
+  failures, and HTTP error responses.
+
+Useful attachments within those groups:
 
 - Full-page screenshot of the failure state.
 - A readable traceback (optionally filtered to project frames only).
@@ -1106,9 +1194,14 @@ markers =
 
 addopts =
     -ra
-    --tracing=retain-on-failure
-    --screenshot=only-on-failure
+    --html=reports-results/report.html --self-contained-html
+    --alluredir=reports-results/allure-results
 ```
+
+Default the report outputs in `addopts` so a plain `pytest` always produces them, and
+leave `--tracing` / `--video` as per-run flags. Do not add `--screenshot=only-on-failure`:
+that option belongs to `pytest-playwright`'s own `page` fixture, and this framework takes
+its screenshot in the `context_setup` teardown instead.
 
 ---
 
@@ -1322,7 +1415,7 @@ When generating or reviewing framework code, verify:
 - [ ] Test data is under `data`, split into `input_data` (values) and `api_payloads`
       (shape templates with `<placeholders>`).
 - [ ] Payload templates carry no hard-coded values; runtime values are injected.
-- [ ] Passwords and tokens are external secrets.
+- [ ] Passwords and tokens are external secrets; never parametrize over passwords.
 - [ ] Sensitive values are masked in Allure.
 - [ ] Screenshots and traces are retained on failure.
 - [ ] No fixed sleeps are used.
@@ -1348,5 +1441,7 @@ When this skill is active:
 10. Use Allure steps without exposing sensitive values.
 11. Recommend incremental growth rather than creating an enterprise-sized
     framework before it is needed.
-12. When modifying existing code, preserve the current naming and architecture
+12. Treat example page objects, API clients, and tests as template references to
+    replace; do not commit product-specific values into `config/` or `data/`.
+13. When modifying existing code, preserve the current naming and architecture
     unless a change is necessary and clearly explained.

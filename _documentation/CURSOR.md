@@ -81,10 +81,10 @@ can run/debug all tests and inspect pass/fail results.
 pytest -s
 
 # run a single file, headed (visible browser)
-pytest -s tests/e2e/test_create_order_and_login.py --headed
+pytest -s tests/e2e/test_api_login_then_ui_login.py --headed
 
 # choose the browser (see custom option below)
-pytest -s tests/e2e/test_create_order_and_login.py --headed --browser_name firefox
+pytest -s tests/e2e/test_api_login_then_ui_login.py --headed --browser_name firefox
 
 # run one test by name
 pytest -s tests/ui/test_login.py --headed
@@ -102,7 +102,7 @@ pytest --html=report.html --self-contained-html
 pytest --tracing on
 
 # combined: browser, marker, parallel, tracing, HTML report
-pytest --browser_name chrome -m full -n auto --tracing on --html=report.html
+pytest --browser_name chromium -m e2e -n auto --tracing on --html=report.html
 
 # view a trace locally (or drag-and-drop the zip onto https://trace.playwright.dev/)
 playwright show-trace "reports-results/test-results/<test-name>/trace.zip"
@@ -110,15 +110,17 @@ playwright show-trace "reports-results/test-results/<test-name>/trace.zip"
 
 ## 8. Project-specific options
 
-This project defines a **custom command-line option** in `conftest.py`:
+This project defines **custom command-line options** in `conftest.py`:
 
 | Option | Values | Default | Purpose |
 |--------|--------|---------|---------|
-| `--browser_name` | `chrome`, `firefox` | `chrome` | Selects which browser the `browser_setup` fixture launches |
+| `--env` | any key of `config/environment.json` | `"environment"` in `config/execution.json` | Environment to run against: it supplies the app URL, the API host and the other service URLs |
+| `--browser_name` | `chromium`, `firefox`, `webkit` | `browser` in `config/execution.json` | Selects which browser the `browser_setup` fixture launches |
+| `--url` | any URL | the chosen environment's `ui` | Overrides only the application URL passed to UI fixtures |
 
-- Tests currently launch in **headed** mode (`headless=False`) via the fixtures in `conftest.py`.
+- Tests launch in **headed** mode by default (`"headless": false` in `config/execution.json`). Override per run with `--headed` or `--headless` — the CLI flag wins over the config default.
 - The gutter/Testing-panel runners use `pytestArgs` (`["."]`), so they run with the default
-  `--browser_name chrome`. To make GUI runs target a specific browser, add it to `pytestArgs`
+  `--browser_name chromium`. To make GUI runs target a specific browser, add it to `pytestArgs`
   in `.vscode/settings.json`, e.g. `["--browser_name", "firefox", "."]`.
 
 ## 9. Debugging

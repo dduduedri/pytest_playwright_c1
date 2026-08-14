@@ -106,8 +106,8 @@ python -m pytest -m smoke --clean-alluredir
 # full suite: browser, parallel, traces and video, fresh results
 python -m pytest --browser_name chrome -m full -n auto --tracing on --video on --clean-alluredir
 
-# one test case (case id = user key from data/credentials/credentials.json)
-python -m pytest -s "tests/e2e/test_create_order_and_login.py::test_create_order_and_login[user_a]" --clean-alluredir
+# one test case (case id = user key from data/input_data/credentials.json)
+python -m pytest -s "tests/e2e/test_api_login_then_ui_login.py::test_api_login_then_ui_login[user_a]" --clean-alluredir
 ```
 
 ---
@@ -158,13 +158,13 @@ Everything below comes from `import allure`.
 
 ```python
 # 1) decorator - wraps a whole method, AUTO-CAPTURES its arguments as step parameters
-@allure.step("UI · verify order confirmation message")
-def verify_order_message(self):
+@allure.step("UI · verify the user is logged in")
+def verify_logged_in(self):
     ...
 
 # 2) decorator with placeholders bound to argument names
-@allure.step("Open order {order_id}")
-def open_order(self, order_id):
+@allure.step("Open record {record_id}")
+def open_record(self, record_id):
     ...
 
 # 3) context manager - records the step WITHOUT capturing arguments
@@ -188,13 +188,13 @@ Common `attachment_type` values: `TEXT`, `JSON`, `HTML`, `CSV`, `XML`, `PNG`, `J
 ### Grouping, metadata, links
 
 ```python
-@allure.epic("E-commerce")                  # top level of the Behaviors tab
-@allure.feature("Order creation")           # middle level
-@allure.story("Create order via API, ...")  # leaf level
+@allure.epic("Example")                     # top level of the Behaviors tab (your product area)
+@allure.feature("Authentication")           # middle level (the capability)
+@allure.story("User can log in via the UI") # leaf level (the scenario)
 @allure.severity(allure.severity_level.CRITICAL)   # BLOCKER | CRITICAL | NORMAL | MINOR | TRIVIAL
-@allure.title("Smoke · create order (API) + login (UI) · {user_credential[userEmail]}")
+@allure.title("UI · login · {user}")
 @allure.description("Longer free-text description shown on the test page.")
-@allure.tag("smoke", "checkout")
+@allure.tag("smoke", "authentication")
 @allure.link("https://example.com/spec", name="Spec")
 @allure.issue("PROJ-123", name="Known bug")
 @allure.testcase("TC-42", name="Test case")
@@ -202,16 +202,16 @@ def test_something(...):
     ...
 ```
 
-`@allure.title` supports `{arg}` placeholders — including indexing into a dict, as in `{user_credential[userEmail]}` — which is how each parametrized case gets a readable name.
+`@allure.title` supports `{arg}` placeholders — including indexing into a dict, as in `{record[user]}` — which is how each parametrized case gets a readable name. Only parametrize over values that are safe to print: Allure records every parameter, so a password must be resolved from a fixture instead (see [Project conventions](#project-conventions)).
 
 ### Setting metadata at runtime
 
 Use `allure.dynamic.*` when the value is only known while the test runs:
 
 ```python
-allure.dynamic.title(f"Order {order_id}")
+allure.dynamic.title(f"Record {record_id}")
 allure.dynamic.description("computed at runtime")
-allure.dynamic.feature("Checkout")
+allure.dynamic.feature("Authentication")
 allure.dynamic.tag("flaky-env")
 allure.dynamic.link("https://tracker/PROJ-9", name="ticket")
 ```
@@ -225,30 +225,30 @@ Reporting is layered: **each layer adds the detail it owns**, and tests inherit 
 | Layer | File(s) | What it contributes |
 | ----- | ------- | ------------------- |
 | Test | `tests/**` | `epic` / `feature` / `story` / `severity` / `title`, an `Arrange` step, input attachments |
-| Page object | `ui/pages/*.py` | Business-level steps (`UI · login and open dashboard`), assertion steps with locator + expected value |
-| Element wrapper | `ui/elements/*.py` | Action substeps with the element's friendly name (`Fill 'Email' = '...'`) and secret masking |
-| Component | `ui/components/*.py` | Navigation steps (`Navigate to ORDERS`) |
-| API client | `api/base_api.py`, `api/clients/*.py` | HTTP steps (`POST /api/ecom/auth/login`), request payload / response meta / output attachments |
+| Page object | `ui/pages/*.py` | Business-level steps (`UI · login (user: …)`), assertion steps with the expected value |
+| Element wrapper | `ui/elements/*.py` | Action substeps with the element's friendly name (`Fill 'Username or email' = '...'`) and secret masking |
+| Component | `ui/components/*.py` | Steps for shared page sections (`Navigate to <section>`) |
+| API client | `api/base_api.py`, `api/clients/*.py` | HTTP steps (`POST /api/auth/login`), request payload / response meta / output attachments |
 | Fixture | `fixtures/ui_fixtures.py` | Tear-down failure artifacts: screenshot, traceback, console, network, video |
 | Hooks | `conftest.py` | Pretty traceback text, extended `--clean-alluredir`, removal of status-less fixture rows |
 
 ### Test level
 
-```11:24:tests/e2e/test_create_order_and_login.py
-@allure.epic("E-commerce")
-@allure.feature("Order creation")
-@allure.story("Create order via API, then log in via UI")
+```13:26:tests/e2e/test_api_login_then_ui_login.py
+@allure.epic("Example")
+@allure.feature("Authentication")
+@allure.story("Authenticate via API, then verify login through the UI")
 @allure.severity(allure.severity_level.CRITICAL)
-@allure.title("Smoke · create order (API) + login (UI) · {user_credential[userEmail]}")
-@pytest.mark.smoke
+@allure.title("E2E · API login + UI login · {user}")
 @pytest.mark.e2e
-@pytest.mark.parametrize("user_credential", load_credentials(), ids=load_credential_ids())
-def test_create_order_and_login(orders_api: OrdersApi, context_setup, user_credential):
-    # read this run's user credentials from the parametrized data
+@pytest.mark.smoke
+@pytest.mark.skip(reason="Template example - update AuthApi and LoginPage for your app, then remove this marker")
+@pytest.mark.parametrize("user", load_credential_users(), ids=load_credential_ids())
+def test_api_login_then_ui_login(auth_api: AuthApi, context_setup, user, user_passwords):
+    # resolve this run's password from the fixture. it is deliberately not a test
+    # parameter: Allure records every parameter's repr(), so it would reach the report
     with allure.step("Arrange · read user credentials"):
-        user_email = user_credential["userEmail"]
-        user_password = user_credential["UserPassword"]
-        allure.attach(user_email, name="input · user email", attachment_type=allure.attachment_type.TEXT)
+        user_password = user_passwords[user]
 ```
 
 ### Element level — friendly names and masking
@@ -266,12 +266,14 @@ class TextBox(BaseElement):
 
 ### Page-object level — locator and expected value inline
 
-```13:17:ui/pages/order_details_page.py
-    @allure.step("UI · verify order confirmation message")
-    def verify_order_message(self):
-        expected_text = load_expected_result("order_confirmation")["tagline"]
-        with allure.step(f"Assert tagline · locator=//p[@class='tagline'] · expected='{expected_text}'"):
-            expect(self.page.locator("//p[@class='tagline']")).to_have_text(expected_text)
+```40:46:ui/pages/login_page.py
+    # verification method: read the expected value from data/expected_results and
+    # assert it. a page method may assert when it is explicitly a verification step
+    @allure.step("UI · verify the user is logged in")
+    def verify_logged_in(self) -> None:
+        expected_heading = load_expected_result("login")["logged_in_heading"]
+        with allure.step(f"Assert heading is visible · expected='{expected_heading}'"):
+            expect(self.page.get_by_role("heading", name=expected_heading)).to_be_visible()
 ```
 
 ### API level — one step per HTTP call, plus payload attachments
@@ -292,8 +294,8 @@ class TextBox(BaseElement):
 `api/base_api.py` also exposes two helpers used across the clients:
 
 ```python
-attach_json("request · login payload", payload)          # pretty-printed JSON attachment
-attach_text("output · created order id", order_id)       # plain-text attachment
+attach_json("request · login payload", payload)              # pretty-printed JSON attachment
+attach_text("output · auth token (truncated)", short_token)  # plain-text attachment
 ```
 
 Auth tokens are attached **truncated** (`f"{token[:12]}…"`), never in full.
@@ -317,32 +319,21 @@ Opening a single test gives three sections:
 - **Test body** — the nested steps from the test, page objects, elements, and API clients.
 - **Tear down** — fixture cleanup, and where all [failure artifacts](#failure-artifacts) and the video attachment appear.
 
-A real `test_create_order_and_verify_ui` body reads roughly like this:
+The `test_api_login_then_ui_login` body reads like this — each level comes from a different layer (test → API client / page object → element wrapper):
 
 ```text
 Arrange · read user credentials
-  input · user email
-API · create order
-  API · get auth token (user: dudued@gmail.com)
-    request · login payload
-    POST /api/ecom/auth/login
-      response · meta
-    output · auth token (truncated)
-  request · create-order payload
-  POST /api/ecom/order/create-order
+API · get auth token (user: user_a@example.com)
+  request · login payload
+  POST /api/auth/login
     response · meta
-  output · created order id
-UI · login and open dashboard
-  Fill 'Email' = 'dudued@gmail.com'
+  output · auth token (truncated)
+UI · login (user: user_a@example.com)
+  Fill 'Email' = 'user_a@example.com'
   Fill 'Password' = '***'
   Click 'Login'
-UI · open order history from dashboard
-  Navigate to ORDERS
-UI · select order from history and open details
-  Locate order row · locator=//tbody/tr filter(has_text) · input order_id='...'
-  Click View · locator=//td/button[contains(text(), 'View')]
-UI · verify order confirmation message
-  Assert tagline · locator=//p[@class='tagline'] · expected='Thank you for Shopping With Us'
+UI · verify the user is logged in
+  Assert heading is visible · expected='Dashboard'
 ```
 
 ---
@@ -422,10 +413,10 @@ Both fixtures gate their artifacts on that one function, so "did this test fail"
 
 Follow these so new tests read like the existing ones.
 
-1. **Every test carries the full label set** — `epic`, `feature`, `story`, `severity`, `title`. Keep `epic` as the product area (`E-commerce`), `feature` as the capability, `story` as the scenario.
+1. **Every test carries the full label set** — `epic`, `feature`, `story`, `severity`, `title`. Keep `epic` as the product area (the example tests use `Example`; rename it to yours), `feature` as the capability, `story` as the scenario.
 2. **`·` (middle dot) separates the layer prefix from the detail.** Prefixes in use: `UI · `, `API · `, `Arrange · `, `input · `, `output · `, `request · `, `response · `, `screenshot · `, `trace · `, `video · `, `traceback · `. The two browser-log attachments are the deliberate exception, named `browser console errors` and `browser network errors` because they read better as plain phrases.
-3. **Titles end with the data that identifies the case** — e.g. `… · {user_credential[userEmail]}`. Node ids stay short via `ids=load_credential_ids()` (`[user_a]`, `[user_b]`).
-4. **Locators appear in the step text, never in the test.** Tests call page objects; page objects and elements own the selectors and put them into the step (`locator=#userEmail`).
+3. **Titles end with the data that identifies the case** — e.g. `… · {user}`. Node ids stay short via `ids=load_credential_ids()` (`[default]`, `[editor]`).
+4. **Selectors live in page objects and elements, never in a test.** A test calls page methods; the element's friendly name (`Fill 'Username or email' = …`) or an explicit `locator=…` in the step text is what reaches the report.
 5. **Secrets never reach the report.** There are four independent ways a password can get in, and the framework closes all of them:
 
 | Route into the report | Guard |
@@ -435,27 +426,28 @@ Follow these so new tests read like the existing ones.
 | The **Parameters** table | Never parametrize over a value that contains a secret (see the next rule) |
 | Step parameters | Use `with allure.step(...)`, not the decorator, for methods that receive one (see rule 7) |
 
-6. **Never parametrize a test over a credentials dict.** `allure-pytest` records every pytest parameter as `represent(value)`, and pytest additionally prints the test's arguments in its traceback, so a dict parameter puts the password in **both** the Parameters table and the failure trace — with no way to opt out at the parametrize site. Parametrize over the email (not a secret, and it makes a readable title), keep `ids=` on the user keys for short node ids, and resolve the password from the `user_passwords` fixture inside the test:
+6. **Never parametrize a test over a credentials dict.** `allure-pytest` records every pytest parameter as `represent(value)`, and pytest additionally prints the test's arguments in its traceback, so a dict parameter puts the password in **both** the Parameters table and the failure trace — with no way to opt out at the parametrize site. Parametrize over the login name (not a secret, and it makes a readable title), keep `ids=` on the user keys for short node ids, and resolve the password from the `user_passwords` fixture inside the test:
 
-```16:21:tests/ui/test_login.py
-@pytest.mark.parametrize("user_email", load_credential_emails(), ids=load_credential_ids())
-def test_login(context_setup, user_email, user_passwords):
+```19:24:tests/ui/test_login.py
+@pytest.mark.parametrize("user", load_credential_users(), ids=load_credential_ids())
+def test_login(context_setup, user, user_passwords):
     # resolve this run's password from the fixture. it is deliberately not a test
     # parameter: Allure records every parameter's repr(), so it would reach the report
     with allure.step("Arrange · read user credentials"):
-        user_password = user_passwords[user_email]
+        user_password = user_passwords[user]
 ```
 
 7. **Use `with allure.step(...)` — not the decorator — for any method that receives a secret or a big object.** The decorator captures arguments and prints their `repr()`, which would leak a password from a credentials dict and produce noise like `playwright = <Playwright object at 0x…>`:
 
-```26:32:ui/pages/login_page.py
-    # business action: log in and hand back the next page (dashboard).
+```31:38:ui/pages/login_page.py
+    # business action: log in and hand back the page the app lands on.
     # inline step (not @allure.step) so the password argument is not
-    # captured as a report parameter
-    def login_and_dashboard(self, user_email, user_password) -> DashboardPage:
-        with allure.step("UI · login and open dashboard"):
-            self.login(user_email, user_password)
-            return DashboardPage(self.page)
+    # captured as a report parameter.
+    # once you add the landing page object, return it here so tests can chain
+    # page objects: `return DashboardPage(self.page)`
+    def login_and_continue(self, email, password) -> None:
+        with allure.step(f"UI · login (user: {email})"):
+            self.login(email, password)
 ```
 
 8. **Instrument the layer, not the test.** New reporting detail belongs in an element, page object, API client, or fixture — then every test that uses it benefits.
@@ -467,11 +459,11 @@ def test_login(context_setup, user_email, user_passwords):
 ### Add a reporting step to a new page action
 
 ```python
-# ui/pages/cart_page.py
-@allure.step("UI · apply discount code")
-def apply_discount(self, code):
-    with allure.step(f"Fill discount · locator=#coupon · input='{code}'"):
-        self.page.locator("#coupon").fill(code)
+# ui/pages/settings_page.py
+@allure.step("UI · rename the current workspace")
+def rename_workspace(self, name):
+    with allure.step(f"Fill workspace name · locator=#workspace-name · input='{name}'"):
+        self.page.locator("#workspace-name").fill(name)
 ```
 
 ### Add a new reusable element with report-friendly naming
@@ -492,23 +484,23 @@ Then, in the page's `__init__`, give it a human name: `self.terms = Link(page.lo
 ### Attach data mid-test
 
 ```python
-allure.attach(str(order_id), name="output · order id", attachment_type=allure.attachment_type.TEXT)
+allure.attach(str(record_id), name="output · record id", attachment_type=allure.attachment_type.TEXT)
 allure.attach(json.dumps(body, indent=2), name="response · body", attachment_type=allure.attachment_type.JSON)
 ```
 
 ### Attach a screenshot on purpose (not only on failure)
 
 ```python
-with allure.step("Evidence · dashboard after login"):
+with allure.step("Evidence · landing page after login"):
     allure.attach(page.screenshot(full_page=True),
-                  name="screenshot · dashboard",
+                  name="screenshot · landing page",
                   attachment_type=allure.attachment_type.PNG)
 ```
 
 ### Mask a secret
 
 ```python
-self.password.fill(user_password, mask=True)          # renders: Fill 'Password' = '***'
+self.password.fill(password, mask=True)               # renders: Fill 'Password' = '***'
 attach_text("output · auth token (truncated)", f"{token[:12]}…")
 attach_json("request · login payload", payload)       # secret-looking keys become "***"
 ```
@@ -518,8 +510,8 @@ attach_json("request · login payload", payload)       # secret-looking keys bec
 ### Link a test to a ticket
 
 ```python
-@allure.issue("PROJ-123", name="Order total rounding")
-def test_order_total(...):
+@allure.issue("PROJ-123", name="Login rejects valid password")
+def test_login(...):
     ...
 ```
 
@@ -587,9 +579,9 @@ None of these are configured in the repo today — this is how to add them when 
 Create `reports-results/allure-results/environment.properties`:
 
 ```properties
-Browser=chrome
-Browser.Channel=chrome
-URL=http://rahulshettyacademy.com/client
+Browser=chromium
+Browser.Channel=bundled
+URL=https://example.com
 Headless=false
 Python=3.12.4
 Playwright=1.55.0
@@ -658,8 +650,8 @@ CI outline: run `python -m pytest ... --clean-alluredir`, archive `reports-resul
 
 ```bash
 python -m pytest --allure-severities=critical,blocker
-python -m pytest --allure-epics="E-commerce"
-python -m pytest --allure-features="Order creation"
+python -m pytest --allure-epics="Example"
+python -m pytest --allure-features="Authentication"
 python -m pytest --allure-stories="User can log in via the UI"
 python -m pytest --allure-ids=TC-42,TC-43          # tests carrying @allure.id / testcase ids
 python -m pytest --allure-label=owner=qa-team      # any custom label, as name=value

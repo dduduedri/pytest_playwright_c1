@@ -45,6 +45,7 @@ assets/
 .env
 .env.*
 *.pem
+# real accounts: created per machine, never committed (see README)
 data/input_data/credentials.json
 
 # IDE / editors

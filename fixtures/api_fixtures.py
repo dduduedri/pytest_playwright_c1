@@ -2,7 +2,6 @@ import pytest
 from playwright.sync_api import Playwright
 
 from api.clients.auth_api import AuthApi
-from api.clients.orders_api import OrdersApi
 from utils.config_reader import ExecutionConfig
 from utils.report import attach_failure_traceback, is_test_failed
 
@@ -23,13 +22,8 @@ def api_context(playwright: Playwright, execution_config: ExecutionConfig, reque
     context.dispose()
 
 
-# provide a ready-to-use AuthApi client wired to the request context
+# provide a ready-to-use AuthApi client wired to the request context.
+# add one fixture like this per API client you introduce
 @pytest.fixture(scope="function")
 def auth_api(api_context) -> AuthApi:
     return AuthApi(api_context)
-
-
-# provide a ready-to-use OrdersApi client wired to the request context
-@pytest.fixture(scope="function")
-def orders_api(api_context) -> OrdersApi:
-    return OrdersApi(api_context)

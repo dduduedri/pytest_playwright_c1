@@ -20,19 +20,22 @@ pytest_plugins = (
     "fixtures.data_fixtures",
 )
 
-# execution settings (url, browser, channel, headless, timeout) come from config/execution.json
-_config = ExecutionConfig.load()
-
-
-# pytest hook: register our custom CLI options (their defaults come from the config).
-# --browser_name and --url are custom; --tracing/--video/--headed etc. come from pytest-playwright.
+# pytest hook: register our custom CLI options. they all default to None and fall back
+# to the config files at use time, so the run's --env decides before anything is read.
+# --env/--browser_name/--url are custom; --tracing/--video/--headed come from pytest-playwright.
 def pytest_addoption(parser):
     parser.addoption(
-        "--browser_name", action="store", default=_config.browser,
+        "--env", action="store", default=None,
+        help="environment to run against: a key of config/environment.json "
+             "(default: \"environment\" in config/execution.json)",
+    )
+    parser.addoption(
+        "--browser_name", action="store", default=None,
         help="playwright browser type: chromium | firefox | webkit",
     )
     parser.addoption(
-        "--url", action="store", default=_config.application_url, help="application url"
+        "--url", action="store", default=None,
+        help="application url (default: the chosen environment's ui)",
     )
     # headed/headless override for this run. `--headed` is already provided by
     # pytest-playwright; we add `--headless` so either flag can override
@@ -49,9 +52,19 @@ _RESULTS_ROOT = Path("reports-results")
 _CLEAN_DIRS = ("test-results", "videos")
 
 
-# pytest hook that runs once at startup: when the user asks to clean allure results
-# (--clean-alluredir), also wipe our trace/video folders so old runs don't pile up.
+# pytest hook that runs once at startup:
+#   1. resolve the run's settings for the chosen environment, so an unknown --env fails
+#      here with a usage error instead of breaking the setup of every single test
+#   2. when the user asks to clean allure results (--clean-alluredir), also wipe our
+#      trace/video folders so old runs don't pile up
 def pytest_configure(config):
+    try:
+        config.execution_config = ExecutionConfig.load(config.getoption("--env"))
+    except (KeyError, FileNotFoundError, ValueError) as error:
+        # args[0] is our own message; UsageError prints it without a traceback
+        raise pytest.UsageError(error.args[0]) from None
+    log.info("environment: %s", config.execution_config.environment_name)
+
     # skip on xdist workers (they have `workerinput`); only the controller cleans,
     # before workers start writing, so we don't delete freshly created results
     if hasattr(config, "workerinput"):
@@ -107,10 +120,11 @@ def pytest_sessionfinish(session):
         _strip_unknown_fixture_steps(container_path)
 
 
-# session fixture: expose the loaded execution config to tests and other fixtures
+# session fixture: expose the run's settings (resolved in pytest_configure for the
+# environment chosen with --env) to tests and other fixtures
 @pytest.fixture(scope="session")
-def execution_config() -> ExecutionConfig:
-    return _config
+def execution_config(request) -> ExecutionConfig:
+    return request.config.execution_config
 
 
 # helper: build a readable, Java-style failure trace (used for the Allure attachment)
